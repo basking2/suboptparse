@@ -10,13 +10,21 @@ module Suboptparse
 end
 
 class SubOptParser
+
+  attr_accessor :description
+  attr_accessor :name
+
   def initialize(*args)
     @op = OptionParser.new(*args)
     @op.raise_unknown = false
     @banner = @op.banner
+
+    # This command's body.
     @cmd = proc {
-      puts @op.help
+      raise Exception.new("No command defined.")
     }
+
+    # Sub-command which are SubOptParser objects.
     @cmds = {}
 
     yield(self) if block_given?
@@ -27,34 +35,43 @@ class SubOptParser
   end
 
   # Add a command (and return the resulting command).
-  def addcmd(name, description, &body)
-    @cmds[name] = {
-      description: description,
-      body: body,
-    }
-
+  def addcmd(name, *args)
+    o = SubOptParser.new(*args)
+    @cmds[name] = o
+    yield(o) if block_given?
     @op.banner = @banner + cmdhelp
   end
 
-  def setcmd(&body)
-    @cmd = body
+  def cmd(prc=nil, &blk)
+    @cmd = prc unless prc.nil?
+    @cmd = blk unless blk.nil?
   end
 
   def cmdhelp
     @cmds.inject("\n\n") do |h, v|
-      h += "#{v[0]} - #{v[1][:description]}\n"
+      h += "#{v[0]} - #{v[1].description}\n"
     end + "\n"
   end
 
-  def parse(*args, into: nil)
-    self.parse!(args)
+  def parse!(argv, into: nil)
+    self.parse(*argv, into: into)
+  end
 
-    if args.length > 0 && @cmds.length > 0
-      name = args.shift
-      cmd = cmds[name]
-      raise Error.new("Subcommand #{name} was not found.") if cmd.nil?
+  def parse(*argv, into: nil)
+    # Parse, removing all matching arguments.
+    @op.parse!(argv, into: into)
 
-      cmd.parse!(args)
+    # If there is an argument left, see if it is a command.
+    if argv.length > 0 && @cmds.length > 0
+      name = argv.shift
+      cmd = @cmds[name]
+      if cmd.nil?
+        @cmd
+      else
+        cmd.parse!(argv, into: into)
+      end
+    else
+      @cmd
     end
   end
 
