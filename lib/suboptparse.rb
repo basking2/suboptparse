@@ -13,6 +13,7 @@ class SubOptParser
 
   attr_accessor :description
   attr_accessor :name
+  attr_accessor :raise_unknown
 
   def initialize(*args)
     @op = OptionParser.new(*args)
@@ -40,6 +41,7 @@ class SubOptParser
     @cmds[name] = o
     yield(o) if block_given?
     @op.banner = @banner + cmdhelp
+    o
   end
 
   def cmd(prc=nil, &blk)
@@ -53,11 +55,7 @@ class SubOptParser
     end + "\n"
   end
 
-  def parse!(argv, into: nil)
-    self.parse(*argv, into: into)
-  end
-
-  def parse(*argv, into: nil)
+  def _parse!(argv, into: nil)
     # Parse, removing all matching arguments.
     @op.parse!(argv, into: into)
 
@@ -66,13 +64,31 @@ class SubOptParser
       name = argv.shift
       cmd = @cmds[name]
       if cmd.nil?
-        @cmd
+        [@cmd, argv]
       else
         cmd.parse!(argv, into: into)
       end
     else
-      @cmd
+      [@cmd, argv]
     end
+  end
+
+  def parse!(argv, into: nil)
+    _parse!(argv, into: nil)
+  end
+
+  # Calls parse!.
+  def parse(*argv, into: nil)
+    _parse!(argv, into: into)
+  end
+
+  def call(*argv, into: nil)
+    cmd, rest = _parse!(argv, into: into)
+
+    # Explode if we have arguments left but should not.
+    raise Exception.new("Unconsumed arguments: #{argv.join(',')}") if @raise_unknown && ! rest.empty?
+
+    cmd.call(rest)
   end
 
 end
