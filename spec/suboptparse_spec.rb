@@ -109,4 +109,51 @@ cmd2 - this does other things
     o.raise_unknown = true
     expect { o.call("b", "c", "-q", "--a=3") } .to raise_error(Exception)
   end
+
+  it "allows []= syntax" do
+    i = 0
+    so = SubOptParser.new do |o|
+      o['a'] = SubOptParser.new do |o2|
+        o2.description = "The letter a"
+        o2.cmd { i = 42 }
+      end
+    end
+
+    expect(so.help).to eq '''Usage: rspec [options]
+
+a - The letter a
+
+'''
+
+    so.call("a")
+    expect(i).to be(42)
+  end
+
+  it "prints help cmd contents" do
+    so = SubOptParser.new do |so|
+      so.cmdadd("a") do |so2|
+        so2.on("--foo", "-f", "Do the foos.")
+      end
+    end
+    r, w = IO.pipe
+
+    pid = Process.fork
+    if pid.nil?
+      $stdout.reopen(w)
+      so.call("a", "help")
+      # Exit, everything closes.
+    else
+      w.close
+      Process.waitpid(pid)
+      txt = r.read
+      txt = txt.sub(/.Finished in .*/m, '')
+      expect(txt).to eq("""Usage: rspec [options]
+
+help - Print help.
+
+    -f, --foo                        Do the foos.
+""")
+      r.close
+    end
+  end
 end

@@ -35,9 +35,24 @@ class SubOptParser
     @op.__send__(name, *args, &block)
   end
 
+  # Add a sub command as the given name.
+  def []=(name, subcmd)
+    @cmds[name] = subcmd
+    @op.banner = @banner + cmdhelp
+  end
+
   # Add a command (and return the resulting command).
-  def addcmd(name, *args)
+  def cmdadd(name, *args)
     o = SubOptParser.new(*args)
+
+    # Add default "help" sub-job (unless we are the help job).
+    if name != "help"
+      o.cmdadd('help') do |o2|
+        o2.cmd { puts o.help; exit 0 }
+        o2.description = "Print help."
+      end
+    end
+
     @cmds[name] = o
     yield(o) if block_given?
     @op.banner = @banner + cmdhelp
@@ -55,18 +70,19 @@ class SubOptParser
     end + "\n"
   end
 
+  alias addcmd cmdadd
+
   def _parse!(argv, into: nil)
     # Parse, removing all matching arguments.
     @op.parse!(argv, into: into)
 
     # If there is an argument left, see if it is a command.
     if argv.length > 0 && @cmds.length > 0
-      name = argv.shift
-      cmd = @cmds[name]
-      if cmd.nil?
-        [@cmd, argv]
-      else
+      if @cmds.member? argv[0]
+        cmd = @cmds[argv.shift]
         cmd.parse!(argv, into: into)
+      else
+        [@cmd, argv]
       end
     else
       [@cmd, argv]
