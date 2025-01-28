@@ -72,23 +72,6 @@ class SubOptParser
 
   alias addcmd cmdadd
 
-  def _parse!(argv, into: nil)
-    # Parse, removing all matching arguments.
-    @op.parse!(argv, into: into)
-
-    # If there is an argument left, see if it is a command.
-    if argv.length > 0 && @cmds.length > 0
-      if @cmds.member? argv[0]
-        cmd = @cmds[argv.shift]
-        cmd.parse!(argv, into: into)
-      else
-        [@cmd, argv]
-      end
-    else
-      [@cmd, argv]
-    end
-  end
-
   def parse!(argv, into: nil)
     _parse!(argv, into: nil)
   end
@@ -105,6 +88,27 @@ class SubOptParser
     raise Exception.new("Unconsumed arguments: #{argv.join(',')}") if @raise_unknown && ! rest.empty?
 
     cmd.call(rest)
+  end
+
+  protected
+
+  # Users may override how to lookup a command or return "nil" if none is found.
+  def [](name)
+    @cmds[name]
+  end
+
+  private
+
+  def _parse!(argv, into: nil)
+    # Parse, removing all matching arguments.
+    @op.parse!(argv, into: into)
+
+    if not argv.empty? and cmd = self[argv[0]]
+      argv.shift
+      cmd.parse!(argv, into: into)
+    else
+      [ @cmd , argv ]
+    end
   end
 
 end
