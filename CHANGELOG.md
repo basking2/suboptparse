@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.1.3] - 2025-01-28
+
+- Set banner correctly on sub-commands.
+
 ## [0.1.2] - 2025-01-28
 
 - Update usage on sub-commands.
