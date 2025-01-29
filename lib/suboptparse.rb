@@ -62,8 +62,12 @@ class SubOptParser
   end
 
   # Add a command (and return the resulting command).
-  def cmdadd(name, *args)
+  def cmdadd(name, description=nil, *args)
     o = SubOptParser.new(*args)
+
+    o.banner= "Usage: #{name} [options]"
+
+    o.description ||= description 
 
     # Add default "help" sub-job (unless we are the help job).
     if name != "help"
