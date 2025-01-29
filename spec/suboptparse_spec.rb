@@ -156,4 +156,32 @@ help - Print help.
       r.close
     end
   end
+
+  it "handles custom sub-command lookups" do
+    x = 0
+    so = SubOptParser.new
+    so.on_parse do |so|
+      if so['subcmd1'].nil?
+        so["subcmd1"] = SubOptParser.new do |so|
+          so.on("-x=int", Integer, "Set an int.") { |v| x = v}
+          so.description="Set x."
+          so.cmd { |argv| }
+        end
+      end
+    end
+
+    so.call("subcmd1", "-x", "3")
+    expect(x).to be 3
+
+    x = 0
+
+    so.call("subcmd1", "-x", "3")
+    expect(x).to be 3
+
+    expect('''Usage: rspec [options]
+
+subcmd1 - Set x.
+
+''').to eq so.help
+  end
 end

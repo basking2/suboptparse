@@ -19,6 +19,7 @@ class SubOptParser
     @op = OptionParser.new(*args)
     @op.raise_unknown = false
     @banner = @op.banner
+    @on_parse_blk = proc {}
 
     # This command's body.
     @cmd = proc {
@@ -39,6 +40,25 @@ class SubOptParser
   def []=(name, subcmd)
     @cmds[name] = subcmd
     @op.banner = @banner + cmdhelp
+  end
+
+  # Users may override how to lookup a command or return "nil" if none is found.
+  def [](name)
+    @cmds[name]
+  end
+
+  # A callable that is invoked when this SubOptParser starts parsing arguments.
+  # This is primarily here to allow for lazy-populating of commands
+  # instead of requiring them to be defined at program invokation.
+  #
+  # The proc takes 1 argument, this SubOptParse object. Eg:
+  #
+  # ----
+  # parser = SubOptParser.new
+  # parser.on_parse { |p| p["subcmd"] = SubOptParser.new }
+  # ----
+  def on_parse(&blk)
+    @on_parse_blk = blk
   end
 
   # Add a command (and return the resulting command).
@@ -90,16 +110,11 @@ class SubOptParser
     cmd.call(rest)
   end
 
-  protected
-
-  # Users may override how to lookup a command or return "nil" if none is found.
-  def [](name)
-    @cmds[name]
-  end
-
   private
 
   def _parse!(argv, into: nil)
+    @on_parse_blk.call(self) if @on_parse_blk
+
     # Parse, removing all matching arguments.
     @op.parse!(argv, into: into)
 
