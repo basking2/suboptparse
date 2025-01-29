@@ -63,9 +63,7 @@ class SubOptParser
 
   # Add a command (and return the resulting command).
   def cmdadd(name, description=nil, *args)
-    o = SubOptParser.new(*args)
-
-    o.banner= "Usage: #{name} [options]"
+    o = SubOptParser.new(banner="Usage: #{name} [options]")
 
     o.description ||= description 
 

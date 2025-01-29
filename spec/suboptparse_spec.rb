@@ -147,7 +147,7 @@ a - The letter a
       Process.waitpid(pid)
       txt = r.read
       txt = txt.sub(/.Finished in .*/m, '')
-      expect(txt).to eq("""Usage: rspec [options]
+      expect(txt).to eq("""Usage: a [options]
 
 help - Print help.
 
