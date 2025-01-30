@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+- Set @cmdpath in the command ussage. This is the path in the command tree
+  that leads to the executing command.
+
 ## [0.1.3] - 2025-01-28
 
 - Set banner correctly on sub-commands.

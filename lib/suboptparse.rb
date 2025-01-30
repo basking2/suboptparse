@@ -11,15 +11,22 @@ end
 
 class SubOptParser
 
+  # The description of this command.
   attr_accessor :description
-  attr_accessor :name
+
+  # If true, an exception will be thrown when an unknown argument is given.
   attr_accessor :raise_unknown
+
+  # The path of parent commands to this command.
+  # This is automatically set by #cmdadd().
+  attr_accessor :cmdpath
 
   def initialize(*args)
     @op = OptionParser.new(*args)
     @op.raise_unknown = false
     @banner = @op.banner
     @on_parse_blk = proc {}
+    @cmdpath = nil
 
     # This command's body.
     @cmd = proc {
@@ -37,6 +44,11 @@ class SubOptParser
   end
 
   # Add a sub command as the given name.
+  # No automatic initializtion is done. Prefer using #cmdadd().
+  #
+  # ----
+  # parser["sub_parser"] = SubOptParser.new do { |sub| ... }
+  # ----
   def []=(name, subcmd)
     @cmds[name] = subcmd
     @op.banner = @banner + cmdhelp
@@ -63,7 +75,15 @@ class SubOptParser
 
   # Add a command (and return the resulting command).
   def cmdadd(name, description=nil, *args)
-    o = SubOptParser.new(banner="Usage: #{name} [options]")
+
+    o = nil
+
+    # Identify the command path for this command.
+    parent_cmd = @cmdpath.nil? ? File.basename($0) : @cmdpath
+
+    cmdpath = [parent_cmd, name].join(' ')
+    o = SubOptParser.new(banner="Usage: #{cmdpath} [options]")
+    o.cmdpath = cmdpath
 
     o.description ||= description 
 
