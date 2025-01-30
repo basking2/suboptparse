@@ -184,4 +184,89 @@ subcmd1 - Set x.
 
 ''').to eq so.help
   end
+
+  it "shares state using a hash" do
+    shared_state = {}
+    parser1 = SubOptParser.new do |sop|
+      sop.shared_state = shared_state
+
+      sop.addcmd("a", "A sub command") do |sop|
+        sop.addcmd("b", "B sub command of a") do |sop|
+          sop.cmd do |args|
+            sop.shared_state['args'] = args
+          end
+        end
+      end
+    end
+
+    # Call the "a" cmd with unknown arguments.
+    # Those arguments are put in the shared state of "b" and
+    # should be visible to the parent commands "a" and the root.
+    parser1.call("a", "b", "--extra-arg", "foo")
+
+    # The cmd b stored the args.
+    expect(["--extra-arg", "foo"]).to eq(shared_state["args"])
+
+    # The commands share an identical state.
+    expect(shared_state).to be(parser1["a"].shared_state)
+    expect(shared_state).to be(parser1["a"]["b"].shared_state)
+  end
+
+  it "shares state" do
+    shared_state = {}
+    parser1 = SubOptParser.new do |sop|
+      sop.shared_state = shared_state
+
+      sop.addcmd("a", "A sub command") do |sop|
+        sop.addcmd("b", "B sub command of a") do |sop|
+          sop.cmd do |args|
+            sop.shared_state['args'] = args
+          end
+        end
+      end
+    end
+
+    # Call the "a" cmd with unknown arguments.
+    # Those arguments are put in the shared state of "b" and
+    # should be visible to the parent commands "a" and the root.
+    parser1.call("a", "b", "--extra-arg", "foo")
+
+    # The cmd b stored the args.
+    expect(["--extra-arg", "foo"]).to eq(shared_state["args"])
+
+    # The commands share an identical state.
+    expect(shared_state).to be(parser1["a"].shared_state)
+    expect(shared_state).to be(parser1["a"]["b"].shared_state)
+  end
+
+  describe SubOptParse::SharedState do
+    it "shares state" do
+      shared_state = SubOptParse::SharedState.new
+
+      parser1 = SubOptParser.new do |sop|
+        sop.shared_state = shared_state
+        sop.addcmd("a", "A sub command") do |sop|
+          sop.addcmd("b", "B sub command of a") do |sop|
+            sop.cmd do |args|
+              sop.shared_state.merge!({'args' => args})
+            end
+          end
+        end
+      end
+
+      # Call the "a" cmd with unknown arguments.
+      # Those arguments are put in the shared state of "b" and
+      # should be visible to the parent commands "a" and the root.
+      parser1.call("a", "b", "--extra-arg", "foo")
+
+      # The cmd b stored the args.
+      expect(["--extra-arg", "foo"]).to eq(shared_state["args"])
+      expect(["--extra-arg", "foo"]).to eq(shared_state.curr["args"])
+
+      # The commands share an identical state.
+      expect(shared_state).to be(parser1["a"].shared_state)
+      expect(shared_state).to be(parser1["a"]["b"].shared_state)
+    end
+  end
+
 end

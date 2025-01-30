@@ -2,6 +2,10 @@
 
 - Set @cmdpath in the command ussage. This is the path in the command tree
   that leads to the executing command.
+- Add SubOptParse::Util.merge_recursive() to assist in merging
+  configurations loaded into Ruby Hash objects.
+- Add SubOptParse::SharedState to help use shared_state correctly
+  in instances of SubOptParsers.
 
 ## [0.1.3] - 2025-01-28
 

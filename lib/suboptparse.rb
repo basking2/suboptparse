@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require_relative "suboptparse/version"
+require_relative "suboptparse/shared_state"
+require_relative "suboptparse/util"
 
 require 'optparse'
 
@@ -20,6 +22,16 @@ class SubOptParser
   # The path of parent commands to this command.
   # This is automatically set by #cmdadd().
   attr_accessor :cmdpath
+
+  # Arbitrary user data that is shared with all child objects.
+  # If the user does not change this, all child commands get the same
+  # state assigned when created with #cmdadd().
+  #
+  # NOTE: This must be set before calling #cmdadd().
+  #
+  # This may be any object, but the SubOptParse::ShareState class is a
+  # useful helper.
+  attr_accessor :shared_state
 
   def initialize(*args)
     @op = OptionParser.new(*args)
@@ -84,8 +96,8 @@ class SubOptParser
     cmdpath = [parent_cmd, name].join(' ')
     o = SubOptParser.new(banner="Usage: #{cmdpath} [options]")
     o.cmdpath = cmdpath
-
     o.description ||= description 
+    o.shared_state = @shared_state
 
     # Add default "help" sub-job (unless we are the help job).
     if name != "help"
