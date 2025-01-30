@@ -160,7 +160,7 @@ help - Print help.
   it "handles custom sub-command lookups" do
     x = 0
     so = SubOptParser.new
-    so.on_parse do |so|
+    so.on_parse do |so, argv|
       if so['subcmd1'].nil?
         so["subcmd1"] = SubOptParser.new do |so|
           so.on("-x=int", Integer, "Set an int.") { |v| x = v}
@@ -168,6 +168,7 @@ help - Print help.
           so.cmd { |argv| }
         end
       end
+      argv 
     end
 
     so.call("subcmd1", "-x", "3")

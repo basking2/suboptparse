@@ -37,7 +37,7 @@ class SubOptParser
     @op = OptionParser.new(*args)
     @op.raise_unknown = false
     @banner = @op.banner
-    @on_parse_blk = proc {}
+    @on_parse_blk = nil
     @cmdpath = nil
 
     # This command's body.
@@ -73,14 +73,21 @@ class SubOptParser
 
   # A callable that is invoked when this SubOptParser starts parsing arguments.
   # This is primarily here to allow for lazy-populating of commands
-  # instead of requiring them to be defined at program invokation.
+  # instead of requiring them to be defined at program invokation *or*
+  # to allow filtering or manipulating the command line arguments before
+  # parsing.
   #
-  # The proc takes 1 argument, this SubOptParse object. Eg:
+  # The proc takes 2 arguments, this SubOptParse object and the current
+  # command line options array. Whatever is returned by this call
+  # is assigned to the command line options array value and is parsed. Eg:
   #
   # ----
   # parser = SubOptParser.new
-  # parser.on_parse { |p| p["subcmd"] = SubOptParser.new }
+  # parser.on_parse { |p,args| p["subcmd"] = SubOptParser.new ; args}
   # ----
+  #
+  # Be careful to not create infinite recursion by adding
+  # commands that call themselves and then add themselves.
   def on_parse(&blk)
     @on_parse_blk = blk
   end
@@ -135,6 +142,15 @@ class SubOptParser
     _parse!(argv, into: into)
   end
 
+  # Parse the arguments in *argv and execute #call() on the returned command.
+  # Any unparsed values are passed to the invocation of #call().
+  #
+  # This is equivalent to
+  #
+  # ```ruby
+  # cmd = parser.parse!(args)
+  # cmd.call(args)
+  # ```
   def call(*argv, into: nil)
     cmd, rest = _parse!(argv, into: into)
 
@@ -147,7 +163,7 @@ class SubOptParser
   private
 
   def _parse!(argv, into: nil)
-    @on_parse_blk.call(self) if @on_parse_blk
+    argv = @on_parse_blk.call(self, argv) if @on_parse_blk
 
     # Parse, removing all matching arguments.
     @op.parse!(argv, into: into)
