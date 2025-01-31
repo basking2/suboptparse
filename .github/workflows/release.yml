@@ -45,5 +45,5 @@ jobs:
         git log -n 2
         git push origin "HEAD:$SRC_BRANCH"
     - name: Publish to Ruby Gems
-      run: rake 'release[origin]'
+      run: bundle exec rake 'release[origin]'
 
