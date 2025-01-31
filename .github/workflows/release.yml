@@ -43,5 +43,5 @@ jobs:
         git diff 
         git commit -m "Setting version to ${TAG}." -- ./lib/suboptparse/version.rb
         git log -n 2
-        git push origin "$TAG:$SRC_BRANCH"
+        git push origin "HEAD:$SRC_BRANCH"
 
