@@ -39,5 +39,5 @@ jobs:
         git config user.name "GitHub"
         git config user.email "git@github.com"
         git commit -m "Setting version to ${TAG}." ./lib/suboptparse/version.rb
-        git push origin "$TAG":$SRC_BRANCH"
+        git push origin "$TAG:$SRC_BRANCH"
 
