@@ -4,8 +4,8 @@ require "suboptparse/util"
 
 RSpec.describe SubOptParse::Util do
   it "merges hashes" do
-    h1 = {a: { b: 0, c: []}}
-    h2 = {a: { b: 2, c: [3]}}
+    h1 = { a: { b: 0, c: [] } }
+    h2 = { a: { b: 2, c: [3] } }
     h1 = SubOptParse::Util.recursive_merge(h1, h2)
     expect(h2).to eq(h1)
 
@@ -24,8 +24,8 @@ RSpec.describe SubOptParse::Util do
   end
 
   it "merges deep hashes" do
-    h1 = {a: { b: { c: 1, f: 9}, g: 10 } }
-    h2 = {a: { b: { c: 2 , d: { e: 3}}, a: 8} }
+    h1 = { a: { b: { c: 1, f: 9 }, g: 10 } }
+    h2 = { a: { b: { c: 2, d: { e: 3 } }, a: 8 } }
     h1 = SubOptParse::Util.recursive_merge(h1, h2)
     expect(h2).to_not eq(h1)
     h2[:a][:b][:f] = 9
@@ -34,16 +34,16 @@ RSpec.describe SubOptParse::Util do
   end
 
   it "prefers incoming object if types don't match" do
-    h1 = { a: { b: 3}}
+    h1 = { a: { b: 3 } }
     h2 = { a: 1 }
     h1 = SubOptParse::Util.recursive_merge(h1, h2)
     expect(h2).to eq(h1)
   end
 
   it "appends array values for the incoming object" do
-    h1 = { a: [1, 2, 3]}
-    h2 = { a: [4, 5, 6]}
+    h1 = { a: [1, 2, 3] }
+    h2 = { a: [4, 5, 6] }
     h1 = SubOptParse::Util.recursive_merge(h1, h2)
-    expect([1,2,3,4,5,6]).to eq(h1[:a])
+    expect([1, 2, 3, 4, 5, 6]).to eq(h1[:a])
   end
 end

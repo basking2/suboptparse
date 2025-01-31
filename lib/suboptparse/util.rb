@@ -1,6 +1,6 @@
 module SubOptParse
   # Utility methods that may help in writing commands.
-  module Util  
+  module Util
     # Merge obj2 into obj1, if possible.
     # Only hashes and lists are mergable.
     def self.recursive_merge(obj1, obj2)

@@ -4,9 +4,9 @@ require_relative "lib/suboptparse/version"
 
 Gem::Specification.new do |spec|
   spec.name = "suboptparse"
-  spec.version = Suboptparse::VERSION
+  spec.version = SubOptParse::VERSION
   spec.authors = ["Sam Baskinger"]
-  spec.email = ["basking2@yahoo.com" ]
+  spec.email = ["basking2@yahoo.com"]
 
   spec.summary = "Add subcommands to OptionParser."
   spec.description = "Augment the default optparse OptionParser with some support for sub commands."

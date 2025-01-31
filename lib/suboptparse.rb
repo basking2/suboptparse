@@ -4,15 +4,13 @@ require_relative "suboptparse/version"
 require_relative "suboptparse/shared_state"
 require_relative "suboptparse/util"
 
-require 'optparse'
+require "optparse"
 
-module Suboptparse
+module SubOptParse
   class Error < StandardError; end
-  # Your code goes here...
 end
 
 class SubOptParser
-
   # The description of this command.
   attr_accessor :description
 
@@ -58,9 +56,7 @@ class SubOptParser
   # Add a sub command as the given name.
   # No automatic initializtion is done. Prefer using #cmdadd().
   #
-  # ----
-  # parser["sub_parser"] = SubOptParser.new do { |sub| ... }
-  # ----
+  #     parser["sub_parser"] = SubOptParser.new do { |sub| ... }
   def []=(name, subcmd)
     @cmds[name] = subcmd
     @op.banner = @banner + cmdhelp
@@ -81,35 +77,33 @@ class SubOptParser
   # command line options array. Whatever is returned by this call
   # is assigned to the command line options array value and is parsed. Eg:
   #
-  # ----
-  # parser = SubOptParser.new
-  # parser.on_parse { |p,args| p["subcmd"] = SubOptParser.new ; args}
-  # ----
+  #     parser = SubOptParser.new
+  #     parser.on_parse { |p,args| p["subcmd"] = SubOptParser.new ; args}
   #
   # Be careful to not create infinite recursion by adding
   # commands that call themselves and then add themselves.
-  def on_parse(&blk)
+  def on_parse(&blk) # :yields: sub_opt_parser, arguments
     @on_parse_blk = blk
   end
 
   # Add a command (and return the resulting command).
-  def cmdadd(name, description=nil, *args)
-
-    o = nil
-
+  def cmdadd(name, description = nil, *_args) # :yields: self
     # Identify the command path for this command.
     parent_cmd = @cmdpath.nil? ? File.basename($0) : @cmdpath
 
-    cmdpath = [parent_cmd, name].join(' ')
-    o = SubOptParser.new(banner="Usage: #{cmdpath} [options]")
+    cmdpath = [parent_cmd, name].join(" ")
+    o = SubOptParser.new("Usage: #{cmdpath} [options]")
     o.cmdpath = cmdpath
-    o.description ||= description 
+    o.description ||= description
     o.shared_state = @shared_state
 
     # Add default "help" sub-job (unless we are the help job).
     if name != "help"
-      o.cmdadd('help') do |o2|
-        o2.cmd { puts o.help; exit 0 }
+      o.cmdadd("help") do |o2|
+        o2.cmd do
+          puts o.help
+          exit 0
+        end
         o2.description = "Print help."
       end
     end
@@ -120,14 +114,14 @@ class SubOptParser
     o
   end
 
-  def cmd(prc=nil, &blk)
+  def cmd(prc = nil, &blk) # :yields: unconsumed_arguments
     @cmd = prc unless prc.nil?
     @cmd = blk unless blk.nil?
   end
 
   def cmdhelp
     @cmds.inject("\n\n") do |h, v|
-      h += "#{v[0]} - #{v[1].description}\n"
+      h + "#{v[0]} - #{v[1].description}\n"
     end + "\n"
   end
 
@@ -147,15 +141,13 @@ class SubOptParser
   #
   # This is equivalent to
   #
-  # ```ruby
-  # cmd = parser.parse!(args)
-  # cmd.call(args)
-  # ```
+  #     cmd = parser.parse!(args)
+  #     cmd.call(args)
   def call(*argv, into: nil)
     cmd, rest = _parse!(argv, into: into)
 
     # Explode if we have arguments left but should not.
-    raise Exception.new("Unconsumed arguments: #{argv.join(',')}") if @raise_unknown && ! rest.empty?
+    raise Exception.new("Unconsumed arguments: #{argv.join(",")}") if @raise_unknown && !rest.empty?
 
     cmd.call(rest)
   end
@@ -168,12 +160,11 @@ class SubOptParser
     # Parse, removing all matching arguments.
     @op.parse!(argv, into: into)
 
-    if not argv.empty? and cmd = self[argv[0]]
+    if !argv.empty? and cmd = self[argv[0]]
       argv.shift
       cmd.parse!(argv, into: into)
     else
-      [ @cmd , argv ]
+      [@cmd, argv]
     end
   end
-
 end

@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'pp'
+require "pp"
 
-RSpec.describe Suboptparse do
+RSpec.describe SubOptParser do
   it "has a version number" do
-    expect(Suboptparse::VERSION).not_to be nil
+    expect(SubOptParse::VERSION).not_to be nil
   end
 
   it "does something useful" do
@@ -13,11 +13,11 @@ RSpec.describe Suboptparse do
 
   it "normal opt works" do
     i = 0
-    SubOptParser.new() do |opt|
-      opt.on('-i=int', Integer, 'Add i') do |v|
+    SubOptParser.new do |opt|
+      opt.on("-i=int", Integer, "Add i") do |v|
         i = v
       end
-    end.parse(*['-i', '4'])
+    end.parse("-i", "4")
 
     expect(i).to be_an(Integer)
     expect(i).to eq(4)
@@ -26,18 +26,18 @@ RSpec.describe Suboptparse do
   it "prints a banner" do
     o = SubOptParser.new do |opt|
       opt.addcmd("cmd1") { |opt| opt.description = "this does things" }
-      opt.on('-i=int', "Add an int.") {}
+      opt.on("-i=int", "Add an int.") {}
     end
 
-    o.addcmd("cmd2") { |opt| opt.description = "this does other things"}
+    o.addcmd("cmd2") { |opt| opt.description = "this does other things" }
 
-    expect('''Usage: rspec [options]
+    expect('Usage: rspec [options]
 
 cmd1 - this does things
 cmd2 - this does other things
 
     -i=int                           Add an int.
-''').to eq(o.help)
+').to eq(o.help)
   end
 
   it "fully works" do
@@ -46,13 +46,13 @@ cmd2 - this does other things
 
     o = SubOptParser.new do |opt|
       opt.cmd { i = 1 }
-      opt.addcmd("a") { |x| x.cmd { i = 2 }}
-      opt.addcmd("b") do |x| 
-        x.on('-q') {}
+      opt.addcmd("a") { |x| x.cmd { i = 2 } }
+      opt.addcmd("b") do |x|
+        x.on("-q") {}
         x.cmd proc { i = 3 }
         x.addcmd("c") do |x2|
           x2.cmd do |a|
-            i = 4 
+            i = 4
             argv = a
           end
         end
@@ -60,7 +60,7 @@ cmd2 - this does other things
     end
 
     expect(i).to eq 0
-    o.call()
+    o.call
     expect(i).to eq 1
     o.call("a")
     expect(i).to eq 2
@@ -68,12 +68,12 @@ cmd2 - this does other things
     expect(i).to eq 3
     o.call("b", "c", "-q", "--a=3")
     expect(i).to eq 4
-    expect(argv).to eq [ "--a=3" ]
+    expect(argv).to eq ["--a=3"]
     o.call("1", "c")
     expect(i).to eq 1
 
     o.raise_unknown = true
-    expect { o.call("b", "c", "-q", "--a=3") } .to raise_error(Exception)
+    expect { o.call("b", "c", "-q", "--a=3") }.to raise_error(Exception)
   end
 
   it "fully works without blocks" do
@@ -85,16 +85,16 @@ cmd2 - this does other things
     cmda = o.addcmd("a")
     cmda.cmd { i = 2 }
     cmdb = o.addcmd("b")
-    cmdb.on('-q') {}
+    cmdb.on("-q") {}
     cmdb.cmd proc { i = 3 }
     cmdc = cmdb.addcmd("c")
     cmdc.cmd do |a|
-      i = 4 
+      i = 4
       argv = a
     end
 
     expect(i).to eq 0
-    o.call()
+    o.call
     expect(i).to eq 1
     o.call("a")
     expect(i).to eq 2
@@ -102,28 +102,28 @@ cmd2 - this does other things
     expect(i).to eq 3
     o.call("b", "c", "-q", "--a=3")
     expect(i).to eq 4
-    expect(argv).to eq [ "--a=3" ]
+    expect(argv).to eq ["--a=3"]
     o.call("1", "c")
     expect(i).to eq 1
 
     o.raise_unknown = true
-    expect { o.call("b", "c", "-q", "--a=3") } .to raise_error(Exception)
+    expect { o.call("b", "c", "-q", "--a=3") }.to raise_error(Exception)
   end
 
   it "allows []= syntax" do
     i = 0
     so = SubOptParser.new do |o|
-      o['a'] = SubOptParser.new do |o2|
+      o["a"] = SubOptParser.new do |o2|
         o2.description = "The letter a"
         o2.cmd { i = 42 }
       end
     end
 
-    expect(so.help).to eq '''Usage: rspec [options]
+    expect(so.help).to eq 'Usage: rspec [options]
 
 a - The letter a
 
-'''
+'
 
     so.call("a")
     expect(i).to be(42)
@@ -146,13 +146,13 @@ a - The letter a
       w.close
       Process.waitpid(pid)
       txt = r.read
-      txt = txt.sub(/.Finished in .*/m, '')
-      expect(txt).to eq("""Usage: rspec a [options]
+      txt = txt.sub(/.Finished in .*/m, "")
+      expect(txt).to eq("Usage: rspec a [options]
 
 help - Print help.
 
     -f, --foo                        Do the foos.
-""")
+")
       r.close
     end
   end
@@ -161,14 +161,14 @@ help - Print help.
     x = 0
     so = SubOptParser.new
     so.on_parse do |so, argv|
-      if so['subcmd1'].nil?
+      if so["subcmd1"].nil?
         so["subcmd1"] = SubOptParser.new do |so|
-          so.on("-x=int", Integer, "Set an int.") { |v| x = v}
-          so.description="Set x."
+          so.on("-x=int", Integer, "Set an int.") { |v| x = v }
+          so.description = "Set x."
           so.cmd { |argv| }
         end
       end
-      argv 
+      argv
     end
 
     so.call("subcmd1", "-x", "3")
@@ -179,11 +179,11 @@ help - Print help.
     so.call("subcmd1", "-x", "3")
     expect(x).to be 3
 
-    expect('''Usage: rspec [options]
+    expect('Usage: rspec [options]
 
 subcmd1 - Set x.
 
-''').to eq so.help
+').to eq so.help
   end
 
   it "shares state using a hash" do
@@ -194,7 +194,7 @@ subcmd1 - Set x.
       sop.addcmd("a", "A sub command") do |sop|
         sop.addcmd("b", "B sub command of a") do |sop|
           sop.cmd do |args|
-            sop.shared_state['args'] = args
+            sop.shared_state["args"] = args
           end
         end
       end
@@ -221,7 +221,7 @@ subcmd1 - Set x.
       sop.addcmd("a", "A sub command") do |sop|
         sop.addcmd("b", "B sub command of a") do |sop|
           sop.cmd do |args|
-            sop.shared_state['args'] = args
+            sop.shared_state["args"] = args
           end
         end
       end
@@ -249,7 +249,7 @@ subcmd1 - Set x.
         sop.addcmd("a", "A sub command") do |sop|
           sop.addcmd("b", "B sub command of a") do |sop|
             sop.cmd do |args|
-              sop.shared_state.merge!({'args' => args})
+              sop.shared_state.merge!({ "args" => args })
             end
           end
         end
@@ -269,5 +269,4 @@ subcmd1 - Set x.
       expect(shared_state).to be(parser1["a"]["b"].shared_state)
     end
   end
-
 end

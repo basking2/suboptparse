@@ -1,17 +1,15 @@
-
 require_relative "./util"
 
 module SubOptParse
-
   # A helper class that may be used in SubOptParse.shared_state.
-  # 
+  #
   # This class wraps a Hash and allows other hash-like objects to be
   # merged into this hash without creating a new container object.
   class SharedState
     # The current state.
     attr_accessor :curr
 
-    def initialize(initial_state={})
+    def initialize(initial_state = {})
       @curr = initial_state
     end
 
