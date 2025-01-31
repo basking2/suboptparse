@@ -35,7 +35,7 @@ jobs:
     - name: Detect source branch
       run: |
         git fetch --deepen 1
-        SRC_BRANCH="$(git branch -r --contains ""$TAG""  | grep -vE '^\*' | sed 's/ //g' | sed 's/origin\///g' | head -n 1)"
+        SRC_BRANCH="$(git branch -r --contains ""$TAG""  | grep -vE '^\*' | grep -v ' -> ' | sed 's/ //g' | sed 's/origin\///g' | head -n 1)"
         echo $SRC_BRANCH
         echo "SRC_BRANCH=$SRC_BRANCH" >> "$GITHUB_ENV"
     - name: Commit Changes
