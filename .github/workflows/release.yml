@@ -48,4 +48,6 @@ jobs:
         git push origin "HEAD:$SRC_BRANCH"
     - name: Publish to Ruby Gems
       run: bundle exec rake 'release[origin]'
+      env:
+        GEM_HOST_API_KEY: ${{ secrets.GEM_HOST_API_KEY }}
 
