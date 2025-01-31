@@ -29,7 +29,9 @@ jobs:
     - name: Run the default task
       run: bundle exec rake
     - name: Set Version
-      run: bundle exec rake "version[$TAG]"
+      run: |
+        bundle exec rake "version[$TAG]"
+        bundle lock
     - name: Detect source branch
       run: |
         git fetch --deepen 1
