@@ -34,5 +34,5 @@ jobs:
     - run: git config user.email "git@github.com"
     - run: git commit -m "Setting version to ${TAG}." ./lib/suboptparse/version.rb
     - name: Push updated version to origin branch.
-      run: git push origin "$TAG":"$(git branch --contains v0.0.0  | grep -vE '^\*')"
+      run: git push origin "$TAG":"$(git branch --contains ""$TAG""  | grep -vE '^\*' | sed 's/ //g')"
 
