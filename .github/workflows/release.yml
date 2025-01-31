@@ -43,7 +43,7 @@ jobs:
         git config user.name "GitHub"
         git config user.email "git@github.com"
         git diff 
-        git commit -m "Setting version to ${TAG}." -- ./lib/suboptparse/version.rb
+        git commit -m "Setting version to ${TAG}." -- ./lib/suboptparse/version.rb ./Gemfile.lock
         git log -n 2
         git push origin "HEAD:$SRC_BRANCH"
     - name: Publish to Ruby Gems
