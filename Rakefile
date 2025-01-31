@@ -34,7 +34,7 @@ task :version, [:val] do |_t, args|
       io.write(vfile)
     end
   else
-    raise Exception.new("Version must be formatted as v[digit].[digit].[digit].")
+    raise StandardError.new("Version must be formatted as v[digit].[digit].[digit].")
   end
 end
 
