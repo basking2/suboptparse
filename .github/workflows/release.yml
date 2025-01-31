@@ -33,10 +33,10 @@ jobs:
     - name: Detect source branch
       run: |
         git fetch --deepen 1
-        SRC_BRANCH="$(git branch -r --contains ""$TAG""  | grep -vE '^\*' | sed 's/ //g' | sed 's/origin\///g')"
+        SRC_BRANCH="$(git branch -r --contains ""$TAG""  | grep -vE '^\*' | sed 's/ //g' | sed 's/origin\///g' | head -n 1)"
         echo $SRC_BRANCH
         echo "SRC_BRANCH=$SRC_BRANCH" >> "$GITHUB_ENV"
-    - name: "Commit Changes"
+    - name: Commit Changes
       run: |
         git config user.name "GitHub"
         git config user.email "git@github.com"
@@ -44,4 +44,6 @@ jobs:
         git commit -m "Setting version to ${TAG}." -- ./lib/suboptparse/version.rb
         git log -n 2
         git push origin "HEAD:$SRC_BRANCH"
+    - name: Publish to Ruby Gems
+      run: rake 'release[origin]'
 
