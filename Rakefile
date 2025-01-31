@@ -3,6 +3,7 @@
 require "bundler/gem_tasks"
 require "rspec/core/rake_task"
 require "rdoc/task"
+require "English"
 
 RSpec::Core::RakeTask.new(:spec)
 
@@ -16,6 +17,25 @@ RDoc::Task.new do |rdoc|
   rdoc.options << "--format=darkfish"
   rdoc.title = "SubOptParse"
   rdoc.rdoc_dir = "rdoc"
+end
+
+task :version, [:val] do |_t, args|
+  raise StandardError.new, "Version must be formatted as v[digit].[digit].[digit]." \
+      unless args[:val] =~ /^v([0-9]+\.[0-9]+\.[0-9]+)$/
+
+  ver = $LAST_MATCH_INFO[1]
+  puts ver
+  vfile = [
+    "# frozen_string_literal: true",
+    "",
+    "module SubOptParse",
+    "  VERSION = \"#{ver}\"",
+    "end",
+    ""
+  ].join("\n")
+  File.open("./lib/suboptparse/version.rb", "wt") do |io|
+    io.write(vfile)
+  end
 end
 
 task default: %i[spec rubocop]
