@@ -1,5 +1,17 @@
 ## [Unreleased]
 
+## [0.1.8] - 2025-01-31
+
+- Update changelog and readme to match new release process.
+
+## [0.1.7] - 2025-01-31
+
+- *No Change* - Configuring GitHub actions to release code.
+
+## [0.1.6] - 2025-01-31
+
+- *No Change* - Configuring GitHub actions to release code.
+
 ## [0.1.5] - 2025-01-30
 
 - Update project meta data.

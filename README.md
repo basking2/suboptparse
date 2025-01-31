@@ -190,6 +190,16 @@ To release a new version, update the version number in `version.rb`, and then ru
 `bundle exec rake release`, which will create a git tag for the version,
 push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
+## Releasing
+
+```shell
+# Tag with a 3 digit tag prefixed with a "v".
+git tag v0.1.2
+
+# Push the tag. GitHub actions will do the rest.
+git push origin tag v0.1.2
+```
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/basking2/suboptparse.
