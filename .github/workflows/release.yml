@@ -32,7 +32,8 @@ jobs:
       run: bundle exec rake "version[$TAG]"
     - name: Detect source branch
       run: |
-        SRC_BRANCH="$(git branch --contains ""$TAG""  | grep -vE '^\*' | sed 's/ //g')"
+        git fetch --deepen 1
+        SRC_BRANCH="$(git branch -r --contains ""$TAG""  | grep -vE '^\*' | sed 's/ //g' | sed 's/origin\///g')"
         echo $SRC_BRANCH
         echo "SRC_BRANCH=$SRC_BRANCH" >> "$GITHUB_ENV"
     - run: |
