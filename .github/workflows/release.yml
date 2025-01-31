@@ -6,8 +6,12 @@ on:
     tags:
     - 'v[0-9]+.[0-9]+.[0-9]+'
 
+env:
+  TAG: ${{ github.ref_name }}
+
 jobs:
   build:
+    if: github.ref_type == 'tag'
     runs-on: ubuntu-latest
     name: Ruby ${{ matrix.ruby }}
     strategy:
@@ -22,6 +26,8 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
+    - name: Set Version
+      run: bundle exec rake "version[$TAG]"
     - name: Run the default task
       run: bundle exec rake
 
