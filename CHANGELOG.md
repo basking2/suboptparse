@@ -1,6 +1,10 @@
 ## [Unreleased]
 
+## [0.1.5] - 2025-01-30
+
 - Update project meta data.
+- Update project rdoc documentation.
+- Add RDoc::Task to Rakefile. Output to ./rdoc.
 
 ## [0.1.4] - 2025-01-30
 
