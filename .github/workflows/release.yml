@@ -1,11 +1,10 @@
 name: Ruby
 
 on:
+  workflow_run:
   push:
-    branches:
-      - main
-
-  pull_request:
+    tags:
+    - 'v[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
   build:
@@ -25,3 +24,4 @@ jobs:
         bundler-cache: true
     - name: Run the default task
       run: bundle exec rake
+
