@@ -1,5 +1,7 @@
 # Suboptparse
 
+[![Gem Version](https://badge.fury.io/rb/suboptparse.svg)](https://badge.fury.io/rb/suboptparse)
+
 SubOptParse is a collection of classes and utilities to extend Ruby's 
 OptionParser with some understanding of sub-commands.
 

@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+- Update project meta data.
+
+## [0.1.4] - 2025-01-30
+
 - Set @cmdpath in the command ussage. This is the path in the command tree
   that leads to the executing command.
 - Add SubOptParse::Util.merge_recursive() to assist in merging
