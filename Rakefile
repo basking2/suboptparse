@@ -18,7 +18,7 @@ RDoc::Task.new do |rdoc|
   rdoc.rdoc_dir = "rdoc"
 end
 
-task :version, [:val] do |t, args|
+task :version, [:val] do |_t, args|
   puts args[:val]
 end
 

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "pp"
-
 RSpec.describe SubOptParser do
   it "has a version number" do
     expect(SubOptParse::VERSION).not_to be nil
@@ -157,6 +155,7 @@ help - Print help.
     end
   end
 
+  # rubocop:disable Layout/EmptyLinesAroundArguments
   it "handles custom sub-command lookups" do
     x = 0
     so = SubOptParser.new
@@ -185,6 +184,7 @@ subcmd1 - Set x.
 
 ').to eq so.help
   end
+  # rubocop:enable Layout/EmptyLinesAroundArguments
 
   it "shares state using a hash" do
     shared_state = {}

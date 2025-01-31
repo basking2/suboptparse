@@ -10,6 +10,7 @@ module SubOptParse
   class Error < StandardError; end
 end
 
+# An adaptation of Ruby's default OptionParser to support sub-commands.
 class SubOptParser
   # The description of this command.
   attr_accessor :description
@@ -40,7 +41,7 @@ class SubOptParser
 
     # This command's body.
     @cmd = proc {
-      raise Exception.new("No command defined.")
+      raise StandardError, "No command defined."
     }
 
     # Sub-command which are SubOptParser objects.
@@ -51,6 +52,10 @@ class SubOptParser
 
   def method_missing(name, *args, &block)
     @op.__send__(name, *args, &block)
+  end
+
+  def respond_to_missing?(_name, _include_private = false)
+    true
   end
 
   # Add a sub command as the given name.
@@ -87,26 +92,11 @@ class SubOptParser
   end
 
   # Add a command (and return the resulting command).
-  def cmdadd(name, description = nil, *_args) # :yields: self
-    # Identify the command path for this command.
-    parent_cmd = @cmdpath.nil? ? File.basename($0) : @cmdpath
-
-    cmdpath = [parent_cmd, name].join(" ")
-    o = SubOptParser.new("Usage: #{cmdpath} [options]")
-    o.cmdpath = cmdpath
-    o.description ||= description
-    o.shared_state = @shared_state
+  def cmdadd(name, description = nil, *args) # :yields: self
+    o = _create_sub_command(name, description, *args)
 
     # Add default "help" sub-job (unless we are the help job).
-    if name != "help"
-      o.cmdadd("help") do |o2|
-        o2.cmd do
-          puts o.help
-          exit 0
-        end
-        o2.description = "Print help."
-      end
-    end
+    _add_default_help_cmd(o) if name != "help"
 
     @cmds[name] = o
     yield(o) if block_given?
@@ -120,15 +110,16 @@ class SubOptParser
   end
 
   def cmdhelp
-    @cmds.inject("\n\n") do |h, v|
-      h + "#{v[0]} - #{v[1].description}\n"
-    end + "\n"
+    h = @cmds.inject("\n\n") do |h, v|
+      "#{h}#{v[0]} - #{v[1].description}\n"
+    end
+    "#{h}\n"
   end
 
   alias addcmd cmdadd
 
   def parse!(argv, into: nil)
-    _parse!(argv, into: nil)
+    _parse!(argv, into: into)
   end
 
   # Calls parse!.
@@ -147,7 +138,7 @@ class SubOptParser
     cmd, rest = _parse!(argv, into: into)
 
     # Explode if we have arguments left but should not.
-    raise Exception.new("Unconsumed arguments: #{argv.join(",")}") if @raise_unknown && !rest.empty?
+    raise StandardError, "Unconsumed arguments: #{argv.join(",")}" if @raise_unknown && !rest.empty?
 
     cmd.call(rest)
   end
@@ -160,11 +151,33 @@ class SubOptParser
     # Parse, removing all matching arguments.
     @op.parse!(argv, into: into)
 
-    if !argv.empty? and cmd = self[argv[0]]
+    if !argv.empty? && (cmd = self[argv[0]])
       argv.shift
       cmd.parse!(argv, into: into)
     else
       [@cmd, argv]
     end
+  end
+
+  def _add_default_help_cmd(opt_parser)
+    opt_parser.cmdadd("help") do |o2|
+      o2.cmd do
+        puts opt_parser.help
+        exit 0
+      end
+      o2.description = "Print help."
+    end
+  end
+
+  def _create_sub_command(name, description, *args)
+    # Identify the command path for this command.
+    parent_cmd = @cmdpath.nil? ? File.basename($PROGRAM_NAME) : @cmdpath
+
+    cmdpath = [parent_cmd, name].join(" ")
+    o = SubOptParser.new("Usage: #{cmdpath} [options]", *args)
+    o.cmdpath = cmdpath
+    o.description ||= description
+    o.shared_state = @shared_state
+    o
   end
 end
