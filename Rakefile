@@ -19,7 +19,23 @@ RDoc::Task.new do |rdoc|
 end
 
 task :version, [:val] do |_t, args|
-  puts args[:val]
+  if args[:val] =~ /^v([0-9]+\.[0-9]+\.[0-9]+)$/
+    ver = $~[1]
+    puts ver
+    vfile = [
+      "# frozen_string_literal: true",
+      "",
+      "module SubOptParse",
+      "  VERSION = \"#{ver}\"",
+      "end",
+      ""
+    ].join("\n")
+    File.open("./lib/suboptparse/version.rb", "wt") do |io|
+      io.write(vfile)
+    end
+  else
+    raise Exception.new("Version must be formatted as v[digit].[digit].[digit].")
+  end
 end
 
 task default: %i[spec rubocop]
