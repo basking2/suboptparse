@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    suboptparse (0.0.1)
+    suboptparse (0.1.6)
 
 GEM
   remote: https://rubygems.org/
