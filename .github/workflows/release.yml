@@ -30,9 +30,14 @@ jobs:
       run: bundle exec rake
     - name: Set Version
       run: bundle exec rake "version[$TAG]"
-    - run: git config user.name "GitHub"
-    - run: git config user.email "git@github.com"
-    - run: git commit -m "Setting version to ${TAG}." ./lib/suboptparse/version.rb
-    - name: Push updated version to origin branch.
-      run: git push origin "$TAG":"$(git branch --contains ""$TAG""  | grep -vE '^\*' | sed 's/ //g')"
+    - name: Detect source branch
+      run: |
+        SRC_BRANCH="$(git branch --contains ""$TAG""  | grep -vE '^\*' | sed 's/ //g')"
+        echo $SRC_BRANCH
+        echo "SRC_BRANCH=$SRC_BRANCH" >> "$GITHUB_ENV"
+    - run: |
+        git config user.name "GitHub"
+        git config user.email "git@github.com"
+        git commit -m "Setting version to ${TAG}." ./lib/suboptparse/version.rb
+        git push origin "$TAG":$SRC_BRANCH"
 
