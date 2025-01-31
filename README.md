@@ -1,4 +1,4 @@
-# Suboptparse
+# SubOptParse
 
 [![Gem Version](https://badge.fury.io/rb/suboptparse.svg)](https://badge.fury.io/rb/suboptparse)
 
