@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- Migrate cmdpath to a list of command names rather than a single string.
+
 ## [0.1.8] - 2025-01-31
 
 - Update changelog and readme to match new release process.

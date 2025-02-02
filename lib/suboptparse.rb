@@ -37,7 +37,7 @@ class SubOptParser
     @op.raise_unknown = false
     @banner = @op.banner
     @on_parse_blk = nil
-    @cmdpath = nil
+    @cmdpath = [ File.basename($PROGRAM_NAME) ]
 
     # This command's body.
     @cmd = proc {
@@ -170,11 +170,8 @@ class SubOptParser
   end
 
   def _create_sub_command(name, description, *args)
-    # Identify the command path for this command.
-    parent_cmd = @cmdpath.nil? ? File.basename($PROGRAM_NAME) : @cmdpath
-
-    cmdpath = [parent_cmd, name].join(" ")
-    o = SubOptParser.new("Usage: #{cmdpath} [options]", *args)
+    cmdpath = @cmdpath.dup.append(name)
+    o = SubOptParser.new("Usage: #{cmdpath.join(" ")} [options]", *args)
     o.cmdpath = cmdpath
     o.description ||= description
     o.shared_state = @shared_state
