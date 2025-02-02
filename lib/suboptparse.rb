@@ -15,9 +15,6 @@ class SubOptParser
   # The description of this command.
   attr_accessor :description
 
-  # If true, an exception will be thrown when an unknown argument is given.
-  attr_accessor :raise_unknown
-
   # The path of parent commands to this command.
   # This is automatically set by #cmdadd().
   attr_accessor :cmdpath
@@ -32,17 +29,21 @@ class SubOptParser
   # useful helper.
   attr_accessor :shared_state
 
+  # When non-nil the +cmdpath+ of this command and a sub-command will be used to
+  # automatically `require` the Ruby file to register the command.
+  #
+  attr_accessor :autorequire_root
+
   def initialize(*args)
     @op = OptionParser.new(*args)
-    @op.raise_unknown = false
+    self.raise_unknown = false
     @banner = @op.banner
     @on_parse_blk = nil
-    @cmdpath = [ File.basename($PROGRAM_NAME) ]
+    @cmdpath = [File.basename($PROGRAM_NAME)]
+    @autorequire_root = nil
 
     # This command's body.
-    @cmd = proc {
-      raise StandardError, "No command defined."
-    }
+    @cmd = proc { raise StandardError, "No command defined." }
 
     # Sub-command which are SubOptParser objects.
     @cmds = {}
@@ -56,6 +57,16 @@ class SubOptParser
 
   def respond_to_missing?(_name, _include_private = false)
     true
+  end
+
+  # If true, an exception will be thrown when an unknown argument is given.
+  def raise_unknown
+    @op.raise_unknown
+  end
+
+  # If true, an exception will be thrown when an unknown argument is given.
+  def raise_unknown=(value)
+    @op.raise_unknown = value
   end
 
   # Add a sub command as the given name.
@@ -138,7 +149,7 @@ class SubOptParser
     cmd, rest = _parse!(argv, into: into)
 
     # Explode if we have arguments left but should not.
-    raise StandardError, "Unconsumed arguments: #{argv.join(",")}" if @raise_unknown && !rest.empty?
+    raise StandardError, "Unconsumed arguments: #{argv.join(",")}" if raise_unknown && !rest.empty?
 
     cmd.call(rest)
   end
@@ -175,6 +186,7 @@ class SubOptParser
     o.cmdpath = cmdpath
     o.description ||= description
     o.shared_state = @shared_state
+    o.raise_unknown = raise_unknown
     o
   end
 end
