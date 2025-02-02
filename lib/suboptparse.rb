@@ -3,6 +3,7 @@
 require_relative "suboptparse/version"
 require_relative "suboptparse/shared_state"
 require_relative "suboptparse/util"
+require_relative "suboptparse/auto_require"
 
 require "optparse"
 
@@ -11,7 +12,12 @@ module SubOptParse
 end
 
 # An adaptation of Ruby's default OptionParser to support sub-commands.
+# :stopdoc:
+# rubocop:disable Metrics/ClassLength
+# :startdoc:
 class SubOptParser
+  include SubOptParser::AutoRequire
+
   # The description of this command.
   attr_accessor :description
 
@@ -35,12 +41,12 @@ class SubOptParser
   attr_accessor :autorequire_root
 
   def initialize(*args)
+    autorequire_init
     @op = OptionParser.new(*args)
     self.raise_unknown = false
     @banner = @op.banner
     @on_parse_blk = nil
     @cmdpath = [File.basename($PROGRAM_NAME)]
-    @autorequire_root = nil
 
     # This command's body.
     @cmd = proc { raise StandardError, "No command defined." }
@@ -121,9 +127,17 @@ class SubOptParser
   end
 
   def cmdhelp
+    # Inject defined commands.
     h = @cmds.inject("\n\n") do |h, v|
       "#{h}#{v[0]} - #{v[1].description}\n"
     end
+
+    # Inject unloaded but documented commands.
+    h = @cmddocs.inject(h) do |h, v|
+      "#{h}#{v[0]} - #{v[1]}\n"
+    end
+
+    # Append extra line.
     "#{h}\n"
   end
 
@@ -154,6 +168,16 @@ class SubOptParser
     cmd.call(rest)
   end
 
+  # How sub-commands are loaded.
+  # If no sub-command can be loaded for the name, +nil+ is returned.
+  def get_subcommand(name)
+    if (cmd = self[name])
+      cmd
+    elsif autorequire_root && (cmd = autorequire(name))
+      cmd
+    end
+  end
+
   private
 
   def _parse!(argv, into: nil)
@@ -162,7 +186,7 @@ class SubOptParser
     # Parse, removing all matching arguments.
     @op.parse!(argv, into: into)
 
-    if !argv.empty? && (cmd = self[argv[0]])
+    if !argv.empty? && (cmd = get_subcommand(argv[0]))
       argv.shift
       cmd.parse!(argv, into: into)
     else
@@ -187,6 +211,10 @@ class SubOptParser
     o.description ||= description
     o.shared_state = @shared_state
     o.raise_unknown = raise_unknown
+    o.autorequire_root = autorequire_root
     o
   end
 end
+# :stopdoc:
+# rubocop:enable Metrics/ClassLength
+# :startdoc:
