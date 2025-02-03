@@ -145,13 +145,22 @@ a - The letter a
       Process.waitpid(pid)
       txt = r.read
       txt = txt.sub(/.Finished in .*/m, "")
-      expect(txt).to eq("Usage: rspec a [options]
+
+      # rubocop:disable Layout/TrailingWhitespace
+      exp_txt = "Usage: rspec [options]
+
+a - 
+
+
+Usage: rspec a [options]
 
 help - Print help.
 
     -f, --foo                        Do the foos.
-")
+"
       r.close
+      expect(exp_txt).to eq(txt)
+      # rubocop:enable Layout/TrailingWhitespace
     end
   end
 

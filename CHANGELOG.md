@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.1.10] - 2025-02-03
+
+- Add recurisve help. Help is printed from the root command down to the 
+  last called child command.
 
 ## [0.1.9] - 2025-02-02
 

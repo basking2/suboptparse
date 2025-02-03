@@ -25,6 +25,9 @@ class SubOptParser
   # This is automatically set by #cmdadd().
   attr_accessor :cmdpath
 
+  # The parent command, or nil? if this is the root command.
+  attr_accessor :cmdparent
+
   # Arbitrary user data that is shared with all child objects.
   # If the user does not change this, all child commands get the same
   # state assigned when created with #cmdadd().
@@ -40,9 +43,18 @@ class SubOptParser
   #
   attr_accessor :autorequire_root
 
-  def initialize(*args)
+  # Initialize a new SubOptParser.
+  #
+  # If block is given, this object is passed to allow for further initialization.
+  #
+  # banner:: Passed to OptionParser.new.
+  # width:: Passed to OptionParser.new.
+  # indent:: Passed to OptionParser.new.
+  # :parent => parent:: Defines the parent command to this one.
+  #
+  def initialize(banner = nil, width = 32, indent = " " * 4, **args) # :yields: self
     autorequire_init
-    @op = OptionParser.new(*args)
+    @op = OptionParser.new(banner, width, indent)
     self.raise_unknown = false
     @banner = @op.banner
     @on_parse_blk = nil
@@ -53,6 +65,8 @@ class SubOptParser
 
     # Sub-command which are SubOptParser objects.
     @cmds = {}
+
+    @cmdparent = args.delete(:parent)
 
     yield(self) if block_given?
   end
@@ -124,6 +138,16 @@ class SubOptParser
   def cmd(prc = nil, &blk) # :yields: unconsumed_arguments
     @cmd = prc unless prc.nil?
     @cmd = blk unless blk.nil?
+  end
+
+  # Put the parent help text at the start of this command's help.
+  # This allows for building recursive help.
+  def help
+    if @cmdparent.nil?
+      @op.help
+    else
+      "#{@cmdparent.help}\n#{@op.help}"
+    end
   end
 
   def cmdhelp
@@ -206,7 +230,7 @@ class SubOptParser
 
   def _create_sub_command(name, description, *args)
     cmdpath = @cmdpath.dup.append(name)
-    o = SubOptParser.new("Usage: #{cmdpath.join(" ")} [options]", *args)
+    o = SubOptParser.new("Usage: #{cmdpath.join(" ")} [options]", *args, parent: self)
     o.cmdpath = cmdpath
     o.description ||= description
     o.shared_state = @shared_state
