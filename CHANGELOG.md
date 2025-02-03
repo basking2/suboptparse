@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+
+## [0.1.9] - 2025-02-02
+
+- Add sub-command documentation when there is no loaded command.
+- Allow auto-loading of files if an autorequire_root path is defined.
+- Migrate cmdpath to a list of command names rather than a single string.
+
 ## [0.1.8] - 2025-01-31
 
 - Update changelog and readme to match new release process.

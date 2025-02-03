@@ -3,6 +3,7 @@
 require_relative "suboptparse/version"
 require_relative "suboptparse/shared_state"
 require_relative "suboptparse/util"
+require_relative "suboptparse/auto_require"
 
 require "optparse"
 
@@ -11,12 +12,14 @@ module SubOptParse
 end
 
 # An adaptation of Ruby's default OptionParser to support sub-commands.
+# :stopdoc:
+# rubocop:disable Metrics/ClassLength
+# :startdoc:
 class SubOptParser
+  include SubOptParser::AutoRequire
+
   # The description of this command.
   attr_accessor :description
-
-  # If true, an exception will be thrown when an unknown argument is given.
-  attr_accessor :raise_unknown
 
   # The path of parent commands to this command.
   # This is automatically set by #cmdadd().
@@ -32,17 +35,21 @@ class SubOptParser
   # useful helper.
   attr_accessor :shared_state
 
+  # When non-nil the +cmdpath+ of this command and a sub-command will be used to
+  # automatically `require` the Ruby file to register the command.
+  #
+  attr_accessor :autorequire_root
+
   def initialize(*args)
+    autorequire_init
     @op = OptionParser.new(*args)
-    @op.raise_unknown = false
+    self.raise_unknown = false
     @banner = @op.banner
     @on_parse_blk = nil
-    @cmdpath = nil
+    @cmdpath = [File.basename($PROGRAM_NAME)]
 
     # This command's body.
-    @cmd = proc {
-      raise StandardError, "No command defined."
-    }
+    @cmd = proc { raise StandardError, "No command defined." }
 
     # Sub-command which are SubOptParser objects.
     @cmds = {}
@@ -56,6 +63,16 @@ class SubOptParser
 
   def respond_to_missing?(_name, _include_private = false)
     true
+  end
+
+  # If true, an exception will be thrown when an unknown argument is given.
+  def raise_unknown
+    @op.raise_unknown
+  end
+
+  # If true, an exception will be thrown when an unknown argument is given.
+  def raise_unknown=(value)
+    @op.raise_unknown = value
   end
 
   # Add a sub command as the given name.
@@ -110,9 +127,17 @@ class SubOptParser
   end
 
   def cmdhelp
+    # Inject defined commands.
     h = @cmds.inject("\n\n") do |h, v|
       "#{h}#{v[0]} - #{v[1].description}\n"
     end
+
+    # Inject unloaded but documented commands.
+    h = @cmddocs.inject(h) do |h, v|
+      "#{h}#{v[0]} - #{v[1]}\n"
+    end
+
+    # Append extra line.
     "#{h}\n"
   end
 
@@ -138,9 +163,19 @@ class SubOptParser
     cmd, rest = _parse!(argv, into: into)
 
     # Explode if we have arguments left but should not.
-    raise StandardError, "Unconsumed arguments: #{argv.join(",")}" if @raise_unknown && !rest.empty?
+    raise StandardError, "Unconsumed arguments: #{argv.join(",")}" if raise_unknown && !rest.empty?
 
     cmd.call(rest)
+  end
+
+  # How sub-commands are loaded.
+  # If no sub-command can be loaded for the name, +nil+ is returned.
+  def get_subcommand(name)
+    if (cmd = self[name])
+      cmd
+    elsif autorequire_root && (cmd = autorequire(name))
+      cmd
+    end
   end
 
   private
@@ -151,7 +186,7 @@ class SubOptParser
     # Parse, removing all matching arguments.
     @op.parse!(argv, into: into)
 
-    if !argv.empty? && (cmd = self[argv[0]])
+    if !argv.empty? && (cmd = get_subcommand(argv[0]))
       argv.shift
       cmd.parse!(argv, into: into)
     else
@@ -170,14 +205,16 @@ class SubOptParser
   end
 
   def _create_sub_command(name, description, *args)
-    # Identify the command path for this command.
-    parent_cmd = @cmdpath.nil? ? File.basename($PROGRAM_NAME) : @cmdpath
-
-    cmdpath = [parent_cmd, name].join(" ")
-    o = SubOptParser.new("Usage: #{cmdpath} [options]", *args)
+    cmdpath = @cmdpath.dup.append(name)
+    o = SubOptParser.new("Usage: #{cmdpath.join(" ")} [options]", *args)
     o.cmdpath = cmdpath
     o.description ||= description
     o.shared_state = @shared_state
+    o.raise_unknown = raise_unknown
+    o.autorequire_root = autorequire_root
     o
   end
 end
+# :stopdoc:
+# rubocop:enable Metrics/ClassLength
+# :startdoc:
