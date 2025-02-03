@@ -67,10 +67,7 @@ class SubOptParser
     #
     # The root app name is ignored as it can change by program invocation.
     def autorequire(name)
-      # Don't consider the root app name.
-      cmdpath = @cmdpath[1..] || []
-
-      path = [@autorequire_root, *cmdpath, "#{name}#{autorequire_suffix}"].join("/")
+      path = generate_require_path(name)
 
       do_in_autorequire(name) do
         require path
@@ -80,10 +77,30 @@ class SubOptParser
       end
     end
 
+    # Build a path for the given command name to pass to require.
+    #
+    #    p = generate_require_path(foo)
+    #    require p
+    #
+    def generate_require_path(name)
+      if @cmddocs.member?(name) && @cmddocs[name]["require"]
+        "#{@autorequire_root}/#{@cmddocs[name]["require"]}"
+      else
+        # Don't consider the root app name.
+        cmdpath = @cmdpath[1..] || []
+
+        [@autorequire_root, *cmdpath, "#{name}#{autorequire_suffix}"].join("/")
+      end
+    end
+
     # Add the name and description of a command to be documented in help text.
     # This is for use with autoloaded commands which may not fully document themselves unless called.
-    def cmddocadd(name, description)
-      @cmddocs[name] = description
+    #
+    # name:: Name of the command.
+    # description:: The description of the command.
+    # req:: String you can pass to "require" to load the command.
+    def cmddocadd(name, description, req = nil)
+      @cmddocs[name] = { "name" => name, "description" => description, "require" => req }
       @op.banner = @banner + cmdhelp
     end
 

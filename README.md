@@ -179,6 +179,103 @@ ret = parser.call("-h", "subcommand")
 puts "Calling subcommand returned #{ret}."
 ```
 
+### Auto Requiring Commands
+
+You can configure the SubOptParser to call `require` on files in your
+`$LOAD_PATH` to load and define sub-commands dynamically. There
+are two approaches, implicit and explicit. Both methods require that the
+loading class define itself when loading.
+
+This may be done by using class variables or class methods that capture
+the current command name being loaded and the current SubOptParse instance
+doing the loading.
+
+A dynamically loaded command might look like this:
+
+```ruby
+# frozen_string_literal: true
+
+require "suboptparse/auto_require"
+
+SubOptParser::AutoRequire.register do |so, name|
+  so.addcmd(name, "A command.") do |so|
+    # Define the command...
+    so.cmd { puts so.help }
+  end
+end
+```
+
+The `register` method is just a conveneint way to access the class
+variables
+`SubOptParse::AutoRequire::auto_require_command_parent`
+and
+`SubOptParse::AutoRequire::auto_require_command_name`.
+You may access them directly, though, that is a lot of typing.
+
+### Implicit Auto Requiring
+
+First, to enable the feature, you must define an `autorequire_root`.
+This path will be prefixed to any file attempted to be loaded with a call
+to `require`.
+
+```ruby
+so = SubOptParser.new do |opt|
+  opt.autorequire_root = "suboptparse/autoreqtest"
+  opt.autorequire_suffix = "_command"
+end
+
+# This calls require "suboptparse/autoreqtest/a_command"
+so.get_subcommand("a").help
+
+# This calls require "suboptparse/autoreqtest/a/b/c_command"
+so.get_subcommand("a", "b", "c").help
+```
+
+There is a problem with this approache. Because the commands are not
+loaded, calling `help` on the parent command will not show the child
+commands. Calling `help` on the child commands will recursively
+print the help from the root command.
+
+You can define documentation for a child command by calling
+`cmddocadd()` as shown here.
+
+```ruby
+so = SubOptParser.new do |opt|
+  opt.autorequire_root = "suboptparse/autoreqtest"
+  opt.autorequire_suffix = "_command"
+  opt.cmddocadd("a", "This is the A command")
+end
+```
+
+Now the help text for the root command will include a listing for the
+sub-command, "a".
+
+### Explicit Auto Requiring
+
+Like with implicit loading, to enable the feature, you must define
+an `autorequire_root`.  This path will be prefixed to any file attempted to
+be loaded with a call to `require`.
+
+To define a sub-command to be loaded, again, `cmddocadd()` is used, but
+included is a 3rd argument which is the `require` path
+*relative to the `autorequire_root`.*
+
+```ruby
+so = SubOptParser.new do |opt|
+  opt.shared_state = {}
+  opt.autorequire_root = "suboptparse/autoreqtest2"
+  opt.cmddocadd("a", "A", "a_command")
+  opt.cmddocadd("b", "B", "a/b_command")
+  opt.cmddocadd("c", "C", "a/b/c_command")
+end
+
+# Calls `require "suboptparse/autoreqtest2/a_command"`.
+so.get_subcommand("a")
+
+# Calls `require "suboptparse/autoreqtest2/a/b/c_command"`.
+so.call("a", "b", "c")
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies.

@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+## [0.1.11] - 2025-02-03
+
+- Extend cmddocadd() to also support dynamic autloading of commands
+  defined in this way. This allows cmd documentation to exist when
+  autoloading is defined.
+
 ## [0.1.10] - 2025-02-03
 
 - Add recurisve help. Help is printed from the root command down to the 

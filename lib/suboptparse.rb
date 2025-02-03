@@ -158,7 +158,7 @@ class SubOptParser
 
     # Inject unloaded but documented commands.
     h = @cmddocs.inject(h) do |h, v|
-      "#{h}#{v[0]} - #{v[1]}\n"
+      "#{h}#{v[0]} - #{v[1]["description"]}\n"
     end
 
     # Append extra line.
