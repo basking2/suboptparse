@@ -12,8 +12,8 @@ RSpec.describe SubOptParser::AutoRequire do
 
       s = "
 
-help - Print help.
 b - B is an empty, intermediate command.
+help - Print help.
 
 "
       expect(s).to eq(so.get_subcommand("a").cmdhelp)
@@ -33,8 +33,8 @@ b - B is an empty, intermediate command.
 
       s = "
 
-help - Print help.
 b - B is an empty, intermediate command.
+help - Print help.
 
 "
       expect(s).to eq(so.get_subcommand("a").cmdhelp)

@@ -151,15 +151,9 @@ class SubOptParser
   end
 
   def cmdhelp
-    # Inject defined commands.
-    h = @cmds.inject("\n\n") do |h, v|
-      "#{h}#{v[0]} - #{v[1].description}\n"
-    end
-
-    # Inject unloaded but documented commands.
-    h = @cmddocs.inject(h) do |h, v|
-      "#{h}#{v[0]} - #{v[1]["description"]}\n"
-    end
+    cmds = _build_cmd_doc_map
+    cmds = _build_cmddocs_doc_map(cmds)
+    h = _build_help_body(cmds)
 
     # Append extra line.
     "#{h}\n"
@@ -237,6 +231,37 @@ class SubOptParser
     o.raise_unknown = raise_unknown
     o.autorequire_root = autorequire_root
     o
+  end
+
+  # Build a map of command names to documentaton strings from @cmds.
+  def _build_cmd_doc_map
+    # Map of command names to descriptions.
+    @cmds.each_with_object({}) do |arr, h|
+      h[arr[0]] = arr[1].description
+    end
+  end
+
+  # Add to the given +cmds+ map of commands to documentation those
+  # commands in the @cmddocs map.
+  #
+  # If a command was already added by _build_cmd_doc_map, it is not
+  # overwritten.
+  #
+  # The final map is returned of commands to documentation.
+  def _build_cmddocs_doc_map(cmds)
+    # Map of documented command names to descriptions.
+    @cmddocs.each_with_object(cmds) do |arr, h|
+      h[arr[0]] = arr[1]["description"] unless @cmds.member?(arr[0])
+    end
+  end
+
+  # Given a map of command names to documentation strings,
+  # return a string that lists them in sorted order suitable for use in
+  # -h, --help or help output.
+  def _build_help_body(cmds)
+    cmds.keys.sort.inject("\n\n") do |h, key|
+      "#{h}#{key} - #{cmds[key]}\n"
+    end
   end
 end
 # :stopdoc:
