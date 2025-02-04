@@ -34,6 +34,7 @@ class SubOptParser
     # rubocop:disable Style/ClassVars
     @@auto_require_command_parent = nil
     @@auto_require_command_name = nil
+    @@auto_require_command_description = nil
     # rubocop:enable Style/ClassVars
 
     class << self
@@ -45,13 +46,17 @@ class SubOptParser
         @@auto_require_command_name
       end
 
-      # Register calls the given block and passes it the
-      # value of @@auto_require_command and @@auto_require_command_name.
+      def auto_require_command_description
+        @@auto_require_command_description
+      end
+
+      # This registers a command with a description with the current values of
+      # @@auto_require_command_name and @@auto_require_command_description and passes
+      # the resulting SubOptParser object to the given block.
       #
-      # The calling module, the child sub-command being loaded, may uses these values
-      # to register itself as a sub-command.
-      def register(&blk) # :yields: current_parent_command, current_child_name
-        blk.call(@@auto_require_command_parent, @@auto_require_command_name)
+      # The calling module should them setup the particulars of the newly registered command.
+      def register(&blk) # :yields: sub_command
+        @@auto_require_command_parent.cmdadd(@@auto_require_command_name, @@auto_require_command_description, &blk)
       end
     end
 
@@ -115,17 +120,28 @@ class SubOptParser
       end
     end
 
+    # rubocop:disable Style/ClassVars, Metrics/MethodLength
     def do_in_autorequire(name)
-      # rubocop:disable Style/ClassVars
       prev_auto_require_command_parent = @@auto_require_command_parent
       prev_auto_require_command_name = @@auto_require_command_name
+      prev_auto_require_command_description = @@auto_require_command_description
       @@auto_require_command_parent = self
       @@auto_require_command_name = name
+      @@auto_require_command_description = get_sub_command_description(name)
       yield if block_given?
     ensure
       @@auto_require_command_parent = prev_auto_require_command_parent
       @@auto_require_command_name = prev_auto_require_command_name
-      # rubocop:enable Style/ClassVars
+      @@auto_require_command_description = prev_auto_require_command_description
+    end
+    # rubocop:enable Style/ClassVars, Metrics/MethodLength:
+
+    def get_sub_command_description(name)
+      if (cmddoc = @cmddocs[name])
+        cmddoc["description"]
+      else
+        ""
+      end
     end
 
     protected
