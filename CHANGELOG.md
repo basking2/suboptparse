@@ -1,5 +1,14 @@
 ## [Unreleased]
 
+## [0.1.12] - 2025-02-03
+
+- Adjust SubOptParse::AutoRequire.require to automatically add the sub-command
+  and pass the created SubOptParse object to the callback for further 
+  configuration.
+- Improve help output to remove duplicate commands and sort the commands by
+  command name. Duplicates could appear when a command was registered by
+  cmdadd() and cmddocsadd().
+
 ## [0.1.11] - 2025-02-03
 
 - Extend cmddocadd() to also support dynamic autloading of commands
