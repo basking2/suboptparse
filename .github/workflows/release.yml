@@ -39,10 +39,10 @@ jobs:
         echo "SRC_BRANCH=$SRC_BRANCH" >> "$GITHUB_ENV"
     - name: Commit Changes
       run: |
-        git config user.name "GitHub"
-        git config user.email "git@github.com"
-        git commit -m "Setting version to ${TAG}." -- ./lib/suboptparse/version.rb ./Gemfile.lock
-        git push origin "HEAD:$SRC_BRANCH"
+        #git config user.name "GitHub"
+        #git config user.email "git@github.com"
+        #git commit -m "Setting version to ${TAG}." -- ./lib/suboptparse/version.rb ./Gemfile.lock
+        #git push origin "HEAD:$SRC_BRANCH"
     - name: Publish to Ruby Gems
       run: echo bundle exec rake 'release[origin]'
       env:
