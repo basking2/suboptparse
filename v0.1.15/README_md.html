@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>README - SubOptParse</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+  var index_rel_prefix = "./";
+</script>
+
+<script src="./js/navigation.js" defer></script>
+<script src="./js/search.js" defer></script>
+<script src="./js/search_index.js" defer></script>
+<script src="./js/searcher.js" defer></script>
+<script src="./js/darkfish.js" defer></script>
+
+<link href="./css/fonts.css" rel="stylesheet">
+<link href="./css/rdoc.css" rel="stylesheet">
+
+
+<body id="top" role="document" class="file">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="./index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="./table_of_contents.html#pages">Pages</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search (/) for a class, method, ..." spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+<div class="nav-section">
+  <h3>Table of Contents</h3>
+
+
+
+  <ul class="link-list" role="directory">
+              <li>
+            <details open>
+              <summary>      <a href="#label-SubOptParse">SubOptParse</a>
+</summary>
+              <ul class="link-list" role="directory">
+                          <li>      <a href="#label-Installation">Installation</a>
+          <li>
+            <details open>
+              <summary>      <a href="#label-Usage">Usage</a>
+</summary>
+              <ul class="link-list" role="directory">
+                          <li>      <a href="#label-Looks+Like+OptionParser">Looks Like OptionParser</a>
+          <li>      <a href="#label-Define+A+Root+Command">Define A Root Command</a>
+          <li>      <a href="#label-Sub+Command+Example">Sub Command Example</a>
+
+              </ul>
+            </details>
+          </li>
+          <li>
+            <details open>
+              <summary>      <a href="#label-How+Tos">How Tos</a>
+</summary>
+              <ul class="link-list" role="directory">
+                          <li>      <a href="#label-Intercept+-h">Intercept -h</a>
+          <li>      <a href="#label-Auto+Requiring+Commands">Auto Requiring Commands</a>
+          <li>      <a href="#label-Implicit+Auto+Requiring">Implicit Auto Requiring</a>
+          <li>      <a href="#label-Explicit+Auto+Requiring">Explicit Auto Requiring</a>
+
+              </ul>
+            </details>
+          </li>
+          <li>      <a href="#label-Development">Development</a>
+          <li>      <a href="#label-Releasing">Releasing</a>
+          <li>      <a href="#label-Contributing">Contributing</a>
+          <li>      <a href="#label-License">License</a>
+
+              </ul>
+            </details>
+          </li>
+
+  </ul>
+</div>
+
+
+  <div id="project-metadata">
+    
+<div id="fileindex-section" class="nav-section">
+  <h3>Pages</h3>
+
+  <ul class="link-list">
+    <li><a href="./README_md.html">README</a>
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-label="Page README.md">
+
+<h1 id="label-SubOptParse"><a href="SubOptParse.html"><code>SubOptParse</code></a><span><a href="#label-SubOptParse">&para;</a> <a href="#top">&uarr;</a></span></h1>
+
+<p><a href="https://badge.fury.io/rb/suboptparse"><img src="https://badge.fury.io/rb/suboptparse.svg"></a></p>
+
+<p><a href="SubOptParse.html"><code>SubOptParse</code></a> is a collection of classes and utilities to extend Ruby’s OptionParser with some understanding of sub-commands.</p>
+
+<p>Sub-commands maybe thought of as a traditional CLI command but with a single parent command as the entry poiont. As an example, consider a CLI application that buys things from a store. We’ll call the command <code>./buy</code>. You can have a sub-command <code>./buy apples --count=3</code> that knows how to buy apples. Now, purchasing from the deli is different and so we isolate that into a different sub-command, <code>deli</code>. You could run <code>./buy deli potato_salad</code>.</p>
+
+<h2 id="label-Installation">Installation<span><a href="#label-Installation">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>Install the gem and add to the application’s Gemfile by executing:</p>
+
+<pre>$ bundle add suboptparse</pre>
+
+<p>If bundler is not being used to manage dependencies, install the gem by executing:</p>
+
+<pre>$ gem install suboptparse</pre>
+
+<h2 id="label-Usage">Usage<span><a href="#label-Usage">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<h3 id="label-Looks+Like+OptionParser">Looks Like OptionParser<span><a href="#label-Looks+Like+OptionParser">&para;</a> <a href="#top">&uarr;</a></span></h3>
+
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&quot;suboptparse&quot;</span>
+
+<span class="ruby-comment"># Looks like OptionParser.</span>
+<span class="ruby-identifier">parser</span> = <span class="ruby-constant">SubOptParser</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">sop</span><span class="ruby-operator">|</span>
+  <span class="ruby-comment"># Normal OptionParser calls.</span>
+  <span class="ruby-identifier">sop</span>.<span class="ruby-identifier">on</span>(<span class="ruby-string">&quot;--my-option=foo&quot;</span>, <span class="ruby-string">&quot;-m&quot;</span>, <span class="ruby-string">&quot;Sets a value&quot;</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+    <span class="ruby-comment"># Record value somewhere.</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-comment"># Still looks like OptionParser, but a command to execute is returned.</span>
+<span class="ruby-identifier">cmd</span> = <span class="ruby-identifier">parser</span>.<span class="ruby-identifier">parse!</span>
+
+<span class="ruby-comment"># If you don&#39;t specify a command, don&#39;t call this! It throws an exception.</span>
+<span class="ruby-identifier">cmd</span>.<span class="ruby-identifier">call</span>()
+</pre>
+
+<h3 id="label-Define+A+Root+Command">Define A Root Command<span><a href="#label-Define+A+Root+Command">&para;</a> <a href="#top">&uarr;</a></span></h3>
+
+<p>This is like the previous example, but we define a command to call.</p>
+
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&quot;suboptparse&quot;</span>
+
+<span class="ruby-comment"># Looks like OptionParser.</span>
+<span class="ruby-identifier">parser</span> = <span class="ruby-constant">SubOptParser</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">sop</span><span class="ruby-operator">|</span>
+  <span class="ruby-comment"># Normal OptionParser calls.</span>
+  <span class="ruby-identifier">sop</span>.<span class="ruby-identifier">on</span>(<span class="ruby-string">&quot;--my-option=foo&quot;</span>, <span class="ruby-string">&quot;-m&quot;</span>, <span class="ruby-string">&quot;Sets a value&quot;</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+    <span class="ruby-comment"># Record value somewhere.</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">sop</span>.<span class="ruby-identifier">cmd</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">args</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Root command run.&quot;</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-comment"># Still looks like OptionParser, but a command to execute is returned.</span>
+<span class="ruby-identifier">cmd</span> = <span class="ruby-identifier">parser</span>.<span class="ruby-identifier">parse!</span>
+
+<span class="ruby-comment"># Now this prints, &quot;Root command run.&quot;</span>
+<span class="ruby-identifier">cmd</span>.<span class="ruby-identifier">call</span>()
+</pre>
+
+<h3 id="label-Sub+Command+Example">Sub Command Example<span><a href="#label-Sub+Command+Example">&para;</a> <a href="#top">&uarr;</a></span></h3>
+
+<p>This example shows a sub-command and a few features.</p>
+
+<p>You can raise an exception if arguments are not consumed during parsing using <code>raise_unknown=true</code>.</p>
+
+<p>You can share state between commands so they can parse into a common location. This makes parent commands sharing common values with child commands easier.</p>
+
+<p>Finally, if you set <code>raise_unknown=false</code> (the default value), then unparsed command line options are passed to the called command.</p>
+
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&quot;suboptparse&quot;</span>
+
+<span class="ruby-comment"># Looks like OptionParser.</span>
+<span class="ruby-identifier">parser</span> = <span class="ruby-constant">SubOptParser</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">sop</span><span class="ruby-operator">|</span>
+
+  <span class="ruby-comment"># Set shared state. All sub-commands may add values to this.</span>
+  <span class="ruby-comment"># This is set at command creation time and should not be changed after.</span>
+  <span class="ruby-identifier">sop</span>.<span class="ruby-identifier">shared_state</span> = <span class="ruby-constant">SubOptParse</span><span class="ruby-operator">::</span><span class="ruby-constant">SharedState</span>.<span class="ruby-identifier">new</span>
+
+  <span class="ruby-comment"># This command should raise an error if it executes with unconsumed options.</span>
+  <span class="ruby-comment"># Default is false.</span>
+  <span class="ruby-identifier">sop</span>.<span class="ruby-identifier">raise_unknown</span> = <span class="ruby-keyword">true</span>
+
+  <span class="ruby-comment"># Normal OptionParser calls.</span>
+  <span class="ruby-identifier">sop</span>.<span class="ruby-identifier">on</span>(<span class="ruby-string">&quot;--my-option=foo&quot;</span>, <span class="ruby-string">&quot;-m&quot;</span>, <span class="ruby-string">&quot;Sets a value&quot;</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+    <span class="ruby-comment"># Record value somewhere.</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">sop</span>.<span class="ruby-identifier">cmd</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">args</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Root command run.&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">sop</span>.<span class="ruby-identifier">cmdadd</span>(<span class="ruby-string">&quot;subcommand&quot;</span>, <span class="ruby-string">&quot;This is a sub-command.&quot;</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">sop</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">sop</span>.<span class="ruby-identifier">on</span>(<span class="ruby-string">&quot;--sub-command-option=value&quot;</span>, <span class="ruby-string">&quot;A sub-command option.&quot;</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">sop</span>.<span class="ruby-identifier">shared_state</span>[<span class="ruby-string">&quot;sub-command-option&quot;</span>] = <span class="ruby-identifier">v</span>
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-identifier">sop</span>.<span class="ruby-identifier">cmd</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">unconsumed_arguments</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">sop</span>.<span class="ruby-identifier">shared_state</span>[<span class="ruby-string">&quot;sub-command-option&quot;</span>]
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-comment"># Parse and call the command in 1 call.</span>
+<span class="ruby-identifier">ret</span> = <span class="ruby-identifier">parser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-string">&quot;subcommand&quot;</span>, <span class="ruby-string">&quot;--sub-command-option=foo&quot;</span>, <span class="ruby-string">&quot;--my-option=bar&quot;</span>)
+
+<span class="ruby-comment"># The returns &quot;foo&quot;.</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Calling subcommand returned #{ret}.&quot;</span>
+</pre>
+
+<h2 id="label-How+Tos">How Tos<span><a href="#label-How+Tos">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<h3 id="label-Intercept+-h">Intercept -h<span><a href="#label-Intercept+-h">&para;</a> <a href="#top">&uarr;</a></span></h3>
+
+<p>Calling <code>-h</code> normally has the effect of terminating parsing and printing the help of the parent command. You can register an <code>on_parse</code> handler to remove <code>-h</code> and append <code>help</code> to the end of the command line arguemnts. This will cause the default help function of the child command to be called when <code>-h</code> is on the command line.</p>
+
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&quot;suboptparse&quot;</span>
+
+<span class="ruby-comment"># Looks like OptionParser.</span>
+<span class="ruby-identifier">parser</span> = <span class="ruby-constant">SubOptParser</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">sop</span><span class="ruby-operator">|</span>
+
+  <span class="ruby-identifier">sop</span>.<span class="ruby-identifier">on_parse</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">op</span>, <span class="ruby-identifier">argv</span><span class="ruby-operator">|</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">argv</span>.<span class="ruby-identifier">include?</span> <span class="ruby-string">&quot;-h&quot;</span> <span class="ruby-keyword">or</span> <span class="ruby-identifier">argv</span>.<span class="ruby-identifier">include?</span> <span class="ruby-string">&quot;--help&quot;</span>
+        <span class="ruby-identifier">argv</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">&quot;-h&quot;</span>)
+        <span class="ruby-identifier">argv</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">&quot;--help&quot;</span>)
+        <span class="ruby-identifier">argv</span>.<span class="ruby-identifier">push</span>(<span class="ruby-string">&#39;help&#39;</span>)
+    <span class="ruby-keyword">end</span>
+    <span class="ruby-identifier">argv</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">sop</span>.<span class="ruby-identifier">shared_state</span> = <span class="ruby-constant">SubOptParse</span><span class="ruby-operator">::</span><span class="ruby-constant">SharedState</span>.<span class="ruby-identifier">new</span>
+
+  <span class="ruby-comment"># Normal OptionParser calls.</span>
+  <span class="ruby-identifier">sop</span>.<span class="ruby-identifier">on</span>(<span class="ruby-string">&quot;--my-option=foo&quot;</span>, <span class="ruby-string">&quot;-m&quot;</span>, <span class="ruby-string">&quot;Sets a value&quot;</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+    <span class="ruby-comment"># Record value somewhere.</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">sop</span>.<span class="ruby-identifier">cmd</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">args</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;Root command run.&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">sop</span>.<span class="ruby-identifier">cmdadd</span>(<span class="ruby-string">&quot;subcommand&quot;</span>, <span class="ruby-string">&quot;This is a sub-command.&quot;</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">sop</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">sop</span>.<span class="ruby-identifier">on</span>(<span class="ruby-string">&quot;--sub-command-option=value&quot;</span>, <span class="ruby-string">&quot;A sub-command option.&quot;</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">sop</span>.<span class="ruby-identifier">shared_state</span>[<span class="ruby-string">&quot;sub-command-option&quot;</span>] = <span class="ruby-identifier">v</span>
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-identifier">sop</span>.<span class="ruby-identifier">cmd</span> <span class="ruby-keyword">do</span>
+      <span class="ruby-identifier">sop</span>.<span class="ruby-identifier">shared_state</span>[<span class="ruby-string">&quot;sub-command-option&quot;</span>]
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-comment"># Parse and call the command in 1 call.</span>
+<span class="ruby-identifier">ret</span> = <span class="ruby-identifier">parser</span>.<span class="ruby-identifier">call</span>(<span class="ruby-string">&quot;-h&quot;</span>, <span class="ruby-string">&quot;subcommand&quot;</span>)
+
+<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Calling subcommand returned #{ret}.&quot;</span>
+</pre>
+
+<h3 id="label-Auto+Requiring+Commands">Auto Requiring Commands<span><a href="#label-Auto+Requiring+Commands">&para;</a> <a href="#top">&uarr;</a></span></h3>
+
+<p>You can configure the <a href="SubOptParser.html"><code>SubOptParser</code></a> to call <code>require</code> on files in your <code>$LOAD_PATH</code> to load and define sub-commands dynamically. There are two approaches, implicit and explicit. Both methods require that the loading class define itself when loading.</p>
+
+<p>This may be done by using class variables or class methods that capture the current command name being loaded and the current <a href="SubOptParse.html"><code>SubOptParse</code></a> instance doing the loading.</p>
+
+<p>A dynamically loaded command might look like this:</p>
+
+<pre class="ruby"><span class="ruby-comment"># frozen_string_literal: true</span>
+
+<span class="ruby-identifier">require</span> <span class="ruby-string">&quot;suboptparse/auto_require&quot;</span>
+
+<span class="ruby-constant">SubOptParser</span><span class="ruby-operator">::</span><span class="ruby-constant">AutoRequire</span>.<span class="ruby-identifier">register</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">so</span>, <span class="ruby-identifier">name</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">so</span>.<span class="ruby-identifier">addcmd</span>(<span class="ruby-identifier">name</span>, <span class="ruby-string">&quot;A command.&quot;</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">so</span><span class="ruby-operator">|</span>
+    <span class="ruby-comment"># Define the command...</span>
+    <span class="ruby-identifier">so</span>.<span class="ruby-identifier">cmd</span> { <span class="ruby-identifier">puts</span> <span class="ruby-identifier">so</span>.<span class="ruby-identifier">help</span> }
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>The <code>register</code> method is just a conveneint way to access the class variables <code>SubOptParse::AutoRequire::auto_require_command_parent</code> and <code>SubOptParse::AutoRequire::auto_require_command_name</code>. You may access them directly, though, that is a lot of typing.</p>
+
+<h3 id="label-Implicit+Auto+Requiring">Implicit Auto Requiring<span><a href="#label-Implicit+Auto+Requiring">&para;</a> <a href="#top">&uarr;</a></span></h3>
+
+<p>First, to enable the feature, you must define an <code>autorequire_root</code>. This path will be prefixed to any file attempted to be loaded with a call to <code>require</code>.</p>
+
+<pre class="ruby"><span class="ruby-identifier">so</span> = <span class="ruby-constant">SubOptParser</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">opt</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">autorequire_root</span> = <span class="ruby-string">&quot;suboptparse/autoreqtest&quot;</span>
+  <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">autorequire_suffix</span> = <span class="ruby-string">&quot;_command&quot;</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-comment"># This calls require &quot;suboptparse/autoreqtest/a_command&quot;</span>
+<span class="ruby-identifier">so</span>.<span class="ruby-identifier">get_subcommand</span>(<span class="ruby-string">&quot;a&quot;</span>).<span class="ruby-identifier">help</span>
+
+<span class="ruby-comment"># This calls require &quot;suboptparse/autoreqtest/a/b/c_command&quot;</span>
+<span class="ruby-identifier">so</span>.<span class="ruby-identifier">get_subcommand</span>(<span class="ruby-string">&quot;a&quot;</span>, <span class="ruby-string">&quot;b&quot;</span>, <span class="ruby-string">&quot;c&quot;</span>).<span class="ruby-identifier">help</span>
+</pre>
+
+<p>There is a problem with this approache. Because the commands are not loaded, calling <code>help</code> on the parent command will not show the child commands. Calling <code>help</code> on the child commands will recursively print the help from the root command.</p>
+
+<p>You can define documentation for a child command by calling <code>cmddocadd()</code> as shown here.</p>
+
+<pre class="ruby"><span class="ruby-identifier">so</span> = <span class="ruby-constant">SubOptParser</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">opt</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">autorequire_root</span> = <span class="ruby-string">&quot;suboptparse/autoreqtest&quot;</span>
+  <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">autorequire_suffix</span> = <span class="ruby-string">&quot;_command&quot;</span>
+  <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">cmddocadd</span>(<span class="ruby-string">&quot;a&quot;</span>, <span class="ruby-string">&quot;This is the A command&quot;</span>)
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>Now the help text for the root command will include a listing for the sub-command, “a”.</p>
+
+<h3 id="label-Explicit+Auto+Requiring">Explicit Auto Requiring<span><a href="#label-Explicit+Auto+Requiring">&para;</a> <a href="#top">&uarr;</a></span></h3>
+
+<p>Like with implicit loading, to enable the feature, you must define an <code>autorequire_root</code>. This path will be prefixed to any file attempted to be loaded with a call to <code>require</code>.</p>
+
+<p>To define a sub-command to be loaded, again, <code>cmddocadd()</code> is used, but included is a 3rd argument which is the <code>require</code> path <em>relative to the <code>autorequire_root</code>.</em></p>
+
+<pre class="ruby"><span class="ruby-identifier">so</span> = <span class="ruby-constant">SubOptParser</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">opt</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">shared_state</span> = {}
+  <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">autorequire_root</span> = <span class="ruby-string">&quot;suboptparse/autoreqtest2&quot;</span>
+  <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">cmddocadd</span>(<span class="ruby-string">&quot;a&quot;</span>, <span class="ruby-string">&quot;A&quot;</span>, <span class="ruby-string">&quot;a_command&quot;</span>)
+  <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">cmddocadd</span>(<span class="ruby-string">&quot;b&quot;</span>, <span class="ruby-string">&quot;B&quot;</span>, <span class="ruby-string">&quot;a/b_command&quot;</span>)
+  <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">cmddocadd</span>(<span class="ruby-string">&quot;c&quot;</span>, <span class="ruby-string">&quot;C&quot;</span>, <span class="ruby-string">&quot;a/b/c_command&quot;</span>)
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-comment"># Calls `require &quot;suboptparse/autoreqtest2/a_command&quot;`.</span>
+<span class="ruby-identifier">so</span>.<span class="ruby-identifier">get_subcommand</span>(<span class="ruby-string">&quot;a&quot;</span>)
+
+<span class="ruby-comment"># Calls `require &quot;suboptparse/autoreqtest2/a/b/c_command&quot;`.</span>
+<span class="ruby-identifier">so</span>.<span class="ruby-identifier">call</span>(<span class="ruby-string">&quot;a&quot;</span>, <span class="ruby-string">&quot;b&quot;</span>, <span class="ruby-string">&quot;c&quot;</span>)
+</pre>
+
+<h2 id="label-Development">Development<span><a href="#label-Development">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>After checking out the repo, run <code>bin/setup</code> to install dependencies. Then, run <code>rake spec</code> to run the tests. You can also run <code>bin/console</code> for an interactive prompt that will allow you to experiment.</p>
+
+<p>To install this gem onto your local machine, run <code>bundle exec rake install</code>. To release a new version, update the version number in <code>version.rb</code>, and then run <code>bundle exec rake release</code>, which will create a git tag for the version, push git commits and the created tag, and push the <code>.gem</code> file to <a href="https://rubygems.org">rubygems.org</a>.</p>
+
+<h2 id="label-Releasing">Releasing<span><a href="#label-Releasing">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<pre># Tag with a 3 digit tag prefixed with a &quot;v&quot;.
+git tag v0.1.2
+
+# Push the tag. GitHub actions will do the rest.
+git push origin tag v0.1.2</pre>
+
+<h2 id="label-Contributing">Contributing<span><a href="#label-Contributing">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>Bug reports and pull requests are welcome on GitHub at <a href="https://github.com/basking2/suboptparse">github.com/basking2/suboptparse</a>.</p>
+
+<h2 id="label-License">License<span><a href="#label-License">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>The gem is available as open source under the terms of the <a href="https://opensource.org/licenses/MIT">MIT License</a>.</p>
+
+</main>
+
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.6.3.1.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+
