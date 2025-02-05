@@ -36,18 +36,15 @@ jobs:
       run: |
         git fetch --deepen 1
         SRC_BRANCH="$(git branch -r --contains ""$TAG""  | grep -vE '^\*' | grep -v ' -> ' | sed 's/ //g' | sed 's/origin\///g' | head -n 1)"
-        echo $SRC_BRANCH
         echo "SRC_BRANCH=$SRC_BRANCH" >> "$GITHUB_ENV"
     - name: Commit Changes
       run: |
         git config user.name "GitHub"
         git config user.email "git@github.com"
-        git diff 
         git commit -m "Setting version to ${TAG}." -- ./lib/suboptparse/version.rb ./Gemfile.lock
-        git log -n 2
         git push origin "HEAD:$SRC_BRANCH"
     - name: Publish to Ruby Gems
-      run: bundle exec rake 'release[origin]'
+      run: echo bundle exec rake 'release[origin]'
       env:
         GEM_HOST_API_KEY: ${{ secrets.GEM_HOST_API_KEY }}
     - name: GitHub Pages
