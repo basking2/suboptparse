@@ -43,4 +43,18 @@ help - Print help.
       expect(3).to eq(so.shared_state["x"])
     end
   end
+
+  it "throws load errors when executing missing commands" do
+    so = SubOptParser.new do |opt|
+      opt.shared_state = {}
+      opt.autorequire_root = "set/to/enable/autoloading"
+      opt.cmdadd("a", "A") do |opt|
+        opt.description = "A command that exists."
+        opt.cmd { "x" }
+      end
+    end
+
+    expect("x").to eq(so.call("a"))
+    expect { so.call("a", "b") }.to raise_error(LoadError)
+  end
 end

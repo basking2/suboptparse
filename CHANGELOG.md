@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [0.1.13] - 2025-02-04
+
+- Throw the LoadError what prevents an command from being auto-required
+  if that command is ever executed.
+
 ## [0.1.12] - 2025-02-03
 
 - Adjust SubOptParse::AutoRequire.require to automatically add the sub-command
