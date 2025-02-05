@@ -50,4 +50,16 @@ jobs:
       run: bundle exec rake 'release[origin]'
       env:
         GEM_HOST_API_KEY: ${{ secrets.GEM_HOST_API_KEY }}
+    - name: GitHub Pages
+      run: |
+        rake rdoc
+        git checkout gh-pages
+        mv rdoc "${TAG}"
+        git add "${TAG}"
+        git config user.name "GitHub"
+        git config user.email "git@github.com"
+        git commit -m "Add ${TAG} documentation to pages."
+        git push
+        git push origin gh-pages:gh-pages
+        
 
