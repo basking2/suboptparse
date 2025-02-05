@@ -49,7 +49,7 @@ jobs:
         GEM_HOST_API_KEY: ${{ secrets.GEM_HOST_API_KEY }}
     - name: GitHub Pages
       run: |
-        rake rdoc
+        bundle exec rake rdoc
         git checkout gh-pages
         mv rdoc "${TAG}"
         git add "${TAG}"
