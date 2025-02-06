@@ -52,7 +52,8 @@ jobs:
         bundle exec rake rdoc
         git checkout gh-pages
         mv rdoc "${TAG}"
-        git add "${TAG}"
+        echo "${TAG}" >> _data/versions.csv
+        git add "${TAG}" _data/versions.csv
         git config user.name "GitHub"
         git config user.email "git@github.com"
         git commit -m "Add ${TAG} documentation to pages."
