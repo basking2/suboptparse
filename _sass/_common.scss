@@ -1,0 +1,33 @@
+
+body {
+    color: black;
+    font-size: 12pt;
+    font-family: Arial, Helvetica, sans-serif;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+.versionlist {
+    float: right;
+    width: 15em;
+    padding: 0px;
+    margin: .25em;
+
+    li {
+        margin-top: .25em;
+        margin-bottom: .25em;
+    }
+
+    ol, ul {
+        padding: 0px;
+        margin: 0px;
+        list-style-image: none;
+        list-style-type: none;
+    }
+}
+
+.content {
+    
+}

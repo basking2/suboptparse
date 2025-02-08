@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -6,10 +6,16 @@
     <link rel="stylesheet" href="{{site.baseurl}}/css/main.css">
   </head>
   <body>
-    <ol>
-    {% for x in site.data.versions %}
-    <li><a href="{{site.baseurl}}/{{x.version}}">SubOptParse {{x.version}}</a></li>
-    {%endfor%}
-    </ol>
-    </body>
+    <div class="versionlist">
+      <ul>
+      {% for x in site.data.versions %}
+      <li><a href="{{site.baseurl}}/{{x.version}}">SubOptParse {{x.version}}</a></li>
+      {%endfor%}
+      </ul>
+    </div>
+
+    <div class="content">
+        {{ content }}
+    </div>
+  </body>
 </html>

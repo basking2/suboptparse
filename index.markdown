@@ -4,3 +4,7 @@
 
 layout: home
 ---
+
+# SubOptParse
+
+SubOptParse is a sub-command option parser based on Ruby's default OptionParser library.
