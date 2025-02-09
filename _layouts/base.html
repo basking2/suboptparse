@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -6,6 +7,9 @@
     <link rel="stylesheet" href="{{site.baseurl}}/css/main.css">
   </head>
   <body>
+
+    <h1>{{ page.title }}</h1>
+
     <div class="versionlist">
       <ul>
       {% for x in site.data.versions %}
@@ -17,5 +21,6 @@
     <div class="content">
         {{ content }}
     </div>
+
   </body>
 </html>

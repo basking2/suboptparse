@@ -1,10 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>{{ page.title }}</title>
-    <link rel="stylesheet" href="{{site.baseurl}}/css/main.css">
-  </head>
-  <body>
-  </body>
-</html>
+---
+layout: base
+---
+
+{{ content }}
+
+    <div class="posts">
+      {% for post in site.posts %}
+      <h2><a href="{{site.baseurl}}/{{post.url}}"">{{ post.title }}</a></h2>
+      {{ post.excerpt }}
+      {% endfor %}
+    </div>
