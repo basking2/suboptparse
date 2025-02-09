@@ -2,8 +2,8 @@
 
 [![Gem Version](https://badge.fury.io/rb/suboptparse.svg)](https://badge.fury.io/rb/suboptparse)
 
-SubOptParse is a collection of classes and utilities to extend Ruby's 
-OptionParser with some understanding of sub-commands.
+[SubOptParse](https://basking2.github.io/suboptparse) is a collection of classes and utilities to extend Ruby's 
+[OptionParser](https://ruby-doc.org/current/optparse/tutorial_rdoc.html) with some understanding of sub-commands.
 
 Sub-commands maybe thought of as a traditional CLI command but with 
 a single parent command as the entry poiont. As an example, consider
