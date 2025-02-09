@@ -12,6 +12,6 @@ jobs:
               with:
                 ruby-version: 3.3.1
                 bundler-cache: true
-            - run: 
+            - run: |
                 bundle install
                 bundle exec jekyll b
