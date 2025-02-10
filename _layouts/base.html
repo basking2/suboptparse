@@ -8,19 +8,24 @@
   </head>
   <body>
 
-    <h1>{{ page.title }}</h1>
+    <div class="bodywrapper">
+      <div>
 
-    <div class="versionlist">
-      <ul>
-      {% for x in site.data.versions %}
-      <li><a href="{{site.baseurl}}/{{x.version}}">SubOptParse {{x.version}}</a></li>
-      {%endfor%}
-      </ul>
+      <h1>{{ page.title }}</h1>
+
+      <div class="versionlist">
+        <ul>
+        {% for x in site.data.versions reversed %}
+        <li><a href="{{site.baseurl}}/{{x.version}}">SubOptParse {{x.version}}</a></li>
+        {%endfor%}
+        </ul>
+      </div>
+      </div>
+
+      <div class="content">
+          {{ content }}
+      </div>
+
     </div>
-
-    <div class="content">
-        {{ content }}
-    </div>
-
   </body>
 </html>

@@ -1,4 +1,8 @@
 
+@use "colors";
+
+@use "sass:color";
+
 body {
     color: black;
     font-size: 12pt;
@@ -6,6 +10,20 @@ body {
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
+
+    h1, h2, h3, h4, h5, h6 {
+        font-weight: normal;
+        color: color.scale(colors.$primary, $lightness: -30%);
+    }
+}
+
+a, a:active, a:hover, a:visited {
+    color: colors.$links;
+}
+
+.bodywrapper {
+    background-color: colors.$background;
+    padding: 1em;
 }
 
 
@@ -29,11 +47,11 @@ body {
 }
 
 .content {
-    
 }
 
 .posts div {
-    max-width: 24em;
+    max-width: 20em;
     display: inline-block;
     vertical-align: top;
+    margin: 0.5em;
 }
