@@ -1,6 +1,8 @@
 # SubOptParse
 
 [![Gem Version](https://badge.fury.io/rb/suboptparse.svg)](https://badge.fury.io/rb/suboptparse)
+[![Known Vulnerabilities](https://snyk.io/test/github/basking2/suboptparse/badge.svg)](https://snyk.io/test/github/basking2/suboptparse)
+
 
 [SubOptParse](https://basking2.github.io/suboptparse) is a collection of classes and utilities to extend Ruby's 
 [OptionParser](https://ruby-doc.org/current/optparse/tutorial_rdoc.html) with some understanding of sub-commands.
