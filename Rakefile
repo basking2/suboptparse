@@ -13,7 +13,7 @@ RuboCop::RakeTask.new
 
 RDoc::Task.new do |rdoc|
   rdoc.main = "README.md"
-  rdoc.rdoc_files.include("README.md", "lib/**/*.rb")
+  rdoc.rdoc_files.include("README.md", "CHANGELOG.md", "lib/**/*.rb")
   rdoc.options << "--format=darkfish"
   rdoc.title = "SubOptParse"
   rdoc.rdoc_dir = "rdoc"
