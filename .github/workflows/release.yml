@@ -50,16 +50,17 @@ jobs:
     - name: GitHub Pages
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        GH_USER: basking2
       run: |
         bundle exec rake rdoc
         git checkout gh-pages
         mv rdoc "${TAG}"
         echo "${TAG}" >> _data/versions.csv
         git add "${TAG}" _data/versions.csv
+        git remote add http-origin https://$GH_USER:$GH_TOKEN@github.com/$GH_USER/suboptparse.git
         git config user.name "GitHub"
         git config user.email "git@github.com"
         git commit -m "Add ${TAG} documentation to pages."
-        git push
-        git push origin gh-pages:gh-pages
+        git push http-origin gh-pages:gh-pages
         
 
