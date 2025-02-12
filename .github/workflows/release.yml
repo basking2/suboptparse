@@ -48,6 +48,8 @@ jobs:
       env:
         GEM_HOST_API_KEY: ${{ secrets.GEM_HOST_API_KEY }}
     - name: GitHub Pages
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
       run: |
         bundle exec rake rdoc
         git checkout gh-pages
