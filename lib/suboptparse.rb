@@ -52,6 +52,9 @@ class SubOptParser
   # indent:: Passed to OptionParser.new.
   # :parent => parent:: Defines the parent command to this one.
   #
+  # :stopdoc:
+  # rubocop:disable Metrics/MethodLength
+  # :startdoc:
   def initialize(banner = nil, width = 32, indent = " " * 4, **args) # :yields: self
     autorequire_init
     @op = OptionParser.new(banner, width, indent)
@@ -71,6 +74,9 @@ class SubOptParser
 
     yield(self) if block_given?
   end
+  # :stopdoc:
+  # rubocop:enable Metrics/MethodLength
+  # :startdoc:
 
   def method_missing(name, *args, &block)
     @op.__send__(name, *args, &block)
@@ -128,8 +134,8 @@ class SubOptParser
     @post_parse_blk = blk
   end
 
-  alias :pre_parse :on_parse
-  alias :post_parse :after_parse
+  alias pre_parse on_parse
+  alias post_parse after_parse
 
   # Add a command (and return the resulting command).
   def cmdadd(name, description = nil, *args) # :yields: self

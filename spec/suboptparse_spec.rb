@@ -280,14 +280,15 @@ subcmd1 - Set x.
   end
 
   it "handles pre and post events" do
-
     pre = 0
     post = 0
     so = SubOptParser.new
     so.cmdadd("a") do |so|
-      so.pre_parse { |x,y| pre+= 1; y }
-      so.post_parse { |x,y| post+= 1; y }
-      so.cmd { }
+      # rubocop:disable Style/Semicolon
+      so.pre_parse { |_, y| pre += 1; y }
+      so.post_parse { |_, y| post += 1; y }
+      # rubocop:enable Style/Semicolon
+      so.cmd {}
     end
 
     so.call("a")
