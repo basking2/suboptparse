@@ -1,9 +1,10 @@
 name: GitHub Pages
 on:
     workflow_dispatch:
-    push:
-        branches:
-        - gh-pages
+    page_build:
+    #push:
+    #    branches:
+    #    - gh-pages
 jobs:
     build:
         runs-on: ubuntu-latest
