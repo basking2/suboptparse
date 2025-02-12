@@ -1,9 +1,9 @@
-## [0.1.24]
+## [0.1.24] - 2025-02-12
 
 - RDoc updates.
 - GitHub build updates.
 
-## [0.1.14]
+## [0.1.14] - 2025-02-12
 
 - Support post_parse and after_parse.
 - Alias on_parse to pre_parse.
