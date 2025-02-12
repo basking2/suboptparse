@@ -2,6 +2,9 @@ name: GitHub Pages
 on:
     workflow_dispatch:
     page_build:
+    release:
+        types:
+        - created
     #push:
     #    branches:
     #    - gh-pages
