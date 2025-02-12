@@ -2,6 +2,8 @@
 
 [![Gem Version](https://badge.fury.io/rb/suboptparse.svg)](https://badge.fury.io/rb/suboptparse)
 [![Known Vulnerabilities](https://snyk.io/test/github/basking2/suboptparse/badge.svg)](https://snyk.io/test/github/basking2/suboptparse)
+[![Release](https://github.com/basking2/suboptparse/actions/workflows/release.yml/badge.svg)](https://github.com/basking2/suboptparse/actions/workflows/release.yml)
+[![GitHub Pages](https://github.com/basking2/suboptparse/actions/workflows/gh-pages.yml/badge.svg)](https://github.com/basking2/suboptparse/actions/workflows/gh-pages.yml)
 
 
 [SubOptParse](https://basking2.github.io/suboptparse) is a collection of classes and utilities to extend Ruby's 
