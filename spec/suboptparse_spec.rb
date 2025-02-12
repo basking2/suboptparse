@@ -278,4 +278,21 @@ subcmd1 - Set x.
       expect(shared_state).to be(parser1["a"]["b"].shared_state)
     end
   end
+
+  it "handles pre and post events" do
+
+    pre = 0
+    post = 0
+    so = SubOptParser.new
+    so.cmdadd("a") do |so|
+      so.pre_parse { |x,y| pre+= 1; y }
+      so.post_parse { |x,y| post+= 1; y }
+      so.cmd { }
+    end
+
+    so.call("a")
+
+    expect(pre).to be(1)
+    expect(post).to be(1)
+  end
 end

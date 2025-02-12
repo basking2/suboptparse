@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+- Support post_parse and after_parse.
+- Alias on_parse to pre_parse.
+
 ## [0.1.13] - 2025-02-04
 
 - Throw the LoadError what prevents an command from being auto-required

@@ -57,7 +57,8 @@ class SubOptParser
     @op = OptionParser.new(banner, width, indent)
     self.raise_unknown = false
     @banner = @op.banner
-    @on_parse_blk = nil
+    @pre_parse_blk = nil
+    @post_parse_blk = nil
     @cmdpath = [File.basename($PROGRAM_NAME)]
 
     # This command's body.
@@ -119,8 +120,16 @@ class SubOptParser
   # Be careful to not create infinite recursion by adding
   # commands that call themselves and then add themselves.
   def on_parse(&blk) # :yields: sub_opt_parser, arguments
-    @on_parse_blk = blk
+    @pre_parse_blk = blk
   end
+
+  # Similar to #on_parse but happens after parsing.
+  def after_parse(&blk)
+    @post_parse_blk = blk
+  end
+
+  alias :pre_parse :on_parse
+  alias :post_parse :after_parse
 
   # Add a command (and return the resulting command).
   def cmdadd(name, description = nil, *args) # :yields: self
@@ -199,10 +208,12 @@ class SubOptParser
   private
 
   def _parse!(argv, into: nil)
-    argv = @on_parse_blk.call(self, argv) if @on_parse_blk
+    argv = @pre_parse_blk.call(self, argv) if @pre_parse_blk
 
     # Parse, removing all matching arguments.
     @op.parse!(argv, into: into)
+
+    argv = @post_parse_blk.call(self, argv) if @post_parse_blk
 
     if !argv.empty? && (cmd = get_subcommand(argv[0]))
       argv.shift
