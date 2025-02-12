@@ -1,7 +1,8 @@
-Wed, 12 Feb 2025 14:34:46 +0000
-README.md	Wed, 12 Feb 2025 14:34:37 +0000
-lib/suboptparse.rb	Wed, 12 Feb 2025 14:34:37 +0000
-lib/suboptparse/auto_require.rb	Wed, 12 Feb 2025 14:34:37 +0000
-lib/suboptparse/shared_state.rb	Wed, 12 Feb 2025 14:34:37 +0000
-lib/suboptparse/util.rb	Wed, 12 Feb 2025 14:34:37 +0000
-lib/suboptparse/version.rb	Wed, 12 Feb 2025 14:34:42 +0000
+Wed, 12 Feb 2025 08:36:48 -0600
+README.md	Wed, 12 Feb 2025 08:21:48 -0600
+CHANGELOG.md	Wed, 12 Feb 2025 08:33:59 -0600
+lib/suboptparse.rb	Wed, 12 Feb 2025 08:21:48 -0600
+lib/suboptparse/auto_require.rb	Wed, 12 Feb 2025 08:21:48 -0600
+lib/suboptparse/shared_state.rb	Wed, 12 Feb 2025 08:21:48 -0600
+lib/suboptparse/util.rb	Wed, 12 Feb 2025 08:21:48 -0600
+lib/suboptparse/version.rb	Wed, 12 Feb 2025 08:33:37 -0600
