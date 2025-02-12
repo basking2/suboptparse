@@ -48,9 +48,6 @@ jobs:
       env:
         GEM_HOST_API_KEY: ${{ secrets.GEM_HOST_API_KEY }}
     - name: GitHub Pages
-      #env:
-      #  GH_TOKEN: ${{ secrets.GH_TOKEN }}
-      #  GH_USER: basking2
       run: |
         bundle exec rake rdoc
         git checkout gh-pages
@@ -64,4 +61,6 @@ jobs:
         #git push http-origin gh-pages:gh-pages
         git push origin gh-pages:gh-pages
     - name: Trigger GitHub Pages Action
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
       run: gh workflow run gh-pages.yml --ref gh-pages
